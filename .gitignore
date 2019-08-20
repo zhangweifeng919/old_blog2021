@@ -1,7 +1,9 @@
-.DS_Store
-Thumbs.db
+node_modules
+package.json
+scaffolds
+yarn.lock
 db.json
-*.log
-node_modules/
-public/
-.deploy*/
+public
+.DS_Store
+.deploy_git
+.npmignore
