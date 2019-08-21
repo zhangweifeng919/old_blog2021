@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+  
+  
+  <link rel="stylesheet" media="all" href="/lib/Han/dist/han.min.css?v=3.3">
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="nlp,统计自然语言处理,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="在MUC-6中首次使用了命名实体（named entity）这一术语，由于当时关注的焦点是信息抽取（information extraction）问题，即从报章等非结构化文本中抽取关于公司活动和国防相关活动的结构化信息，而人名、地名、组织机构名、时间和数字表达（包括时间、日期、货币量和百分数等）是结构化信息的关键内容，因此，MUC-6组织的一项评测任务就是从文本中识别这些实体指称及其类别，即命名实">
+<meta name="keywords" content="nlp,统计自然语言处理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="统计自然语言处理-命名实体识别">
+<meta property="og:url" content="https://zhangweifeng.top/2019/04/23/统计自然语言处理-命名实体识别/index.html">
+<meta property="og:site_name" content="漂泊在学海">
+<meta property="og:description" content="在MUC-6中首次使用了命名实体（named entity）这一术语，由于当时关注的焦点是信息抽取（information extraction）问题，即从报章等非结构化文本中抽取关于公司活动和国防相关活动的结构化信息，而人名、地名、组织机构名、时间和数字表达（包括时间、日期、货币量和百分数等）是结构化信息的关键内容，因此，MUC-6组织的一项评测任务就是从文本中识别这些实体指称及其类别，即命名实">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://zhangweifeng.top/images/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%BB%9F%E8%AE%A1%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86/%E5%9F%BA%E4%BA%8E%E7%BB%9F%E8%AE%A1%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%91%BD%E5%90%8D%E5%AE%9E%E4%BD%93%E8%AF%86%E5%88%AB%E6%96%B9%E6%B3%95%E5%BD%92%E7%BA%B3.png">
+<meta property="og:image" content="https://zhangweifeng.top/images/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%BB%9F%E8%AE%A1%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86/%E5%AE%9E%E4%BD%93%E6%A8%A1%E5%9E%8B%E4%B8%AD%E7%9A%84%E5%AD%90%E7%B1%BB%E5%AE%9A%E4%B9%89.png">
+<meta property="og:updated_time" content="2019-08-20T15:51:00.157Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="统计自然语言处理-命名实体识别">
+<meta name="twitter:description" content="在MUC-6中首次使用了命名实体（named entity）这一术语，由于当时关注的焦点是信息抽取（information extraction）问题，即从报章等非结构化文本中抽取关于公司活动和国防相关活动的结构化信息，而人名、地名、组织机构名、时间和数字表达（包括时间、日期、货币量和百分数等）是结构化信息的关键内容，因此，MUC-6组织的一项评测任务就是从文本中识别这些实体指称及其类别，即命名实">
+<meta name="twitter:image" content="https://zhangweifeng.top/images/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%BB%9F%E8%AE%A1%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86/%E5%9F%BA%E4%BA%8E%E7%BB%9F%E8%AE%A1%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%91%BD%E5%90%8D%E5%AE%9E%E4%BD%93%E8%AF%86%E5%88%AB%E6%96%B9%E6%B3%95%E5%BD%92%E7%BA%B3.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zhangweifeng.top/2019/04/23/统计自然语言处理-命名实体识别/">
+
+
+
+
+
+  <title>统计自然语言处理-命名实体识别 | 漂泊在学海</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">漂泊在学海</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">学海无涯，回头是岸</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zhangweifeng.top/2019/04/23/统计自然语言处理-命名实体识别/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Arvin_Zhang">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="漂泊在学海">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">统计自然语言处理-命名实体识别</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-23T22:17:27+08:00">
+                2019-04-23
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2019-08-20T23:51:00+08:00">
+                2019-08-20
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/读书笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">读书笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/04/23/统计自然语言处理-命名实体识别/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/04/23/统计自然语言处理-命名实体识别/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2019/04/23/统计自然语言处理-命名实体识别/" class="leancloud_visitors" data-flag-title="统计自然语言处理-命名实体识别">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+           
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  
+                </span>
+              
+
+              
+
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  在MUC-6中首次使用了命名实体（named entity）这一术语，由于当时关注的焦点是信息抽取（information extraction）问题，即从报章等非结构化文本中抽取关于公司活动和国防相关活动的结构化信息，而人名、地名、组织机构名、时间和数字表达（包括时间、日期、货币量和百分数等）是结构化信息的关键内容，因此，MUC-6组织的一项评测任务就是从文本中识别这些实体指称及其类别，即命名实体识别和分类（named entity recognition and classification, NERC）任务［Grishman and Sundheim,1996］
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body han-init-context" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="命名实体识别"><a href="#命名实体识别" class="headerlink" title="命名实体识别"></a>命名实体识别</h1><h2 id="方法概述"><a href="#方法概述" class="headerlink" title="方法概述"></a>方法概述</h2><p>根据美国NIST自动内容抽取（automatic content extraction, ACE）评测计划 〔5〕的解释，实体概念在文本中的引用（entity mention，或称“指称项”）有三种形式：命名性指称、名词性指称和代词性指称。例如，在句子“［［中国］乒乓球男队主教练］［刘国梁］出席了会议，［他］指出了当前经济工作的重点。”中，实体概念“刘国梁”的指称项有三个，其中，“中国乒乓球男队主教练”是名词性指称，“刘国梁”是命名性指称，“他”是代词性指称［赵军，2009］。<br>在MUC-6中首次使用了命名实体（named entity）这一术语，由于当时关注的焦点是信息抽取（information extraction）问题，即从报章等非结构化文本中抽取关于公司活动和国防相关活动的结构化信息，而人名、地名、组织机构名、时间和数字表达（包括时间、日期、货币量和百分数等）是结构化信息的关键内容，因此，MUC-6组织的一项评测任务就是从文本中识别这些实体指称及其类别，即命名实体识别和分类（named entity recognition and classification, NERC）任务［Grishman and Sundheim,1996］。确定地讲，就是识别这些实体指称的边界和类别。</p>
+<p>实际上，最早从事命名实体识别的一项工作是Lisa F. Rau（1991）开展的从文本中识别和抽取公司名称的研究，后来也有一些关于专有名词识别的相关研究，但都没有引起太多的关注。MUC-6首次组织的命名实体识别和分类评测任务以及后来出现的一系列评测极大地推动了这一技术的快速发展。除了MUC会议以外，其他相关的评测会议还有：CoNLL（Conference on Computational Natural Language Learning）、ACE和IEER（Information Extraction-Entity Recognition Evaluation）等。</p>
+<p>在MUC-6组织NERC任务之前，主要关注的是人名、地名和组织机构名这三类专有名词的识别。自MUC-6起，地名被进一步细化为城市、州和国家。后来也有人将人名进一步细分为政治家、艺人等小类［Fleischman and Hovy, 2002］。</p>
+<p>在CoNLL组织的评测任务中扩大了专有名词的范围，包含了产品名的识别。在其他一些研究工作中也曾涉及电影名、书名、项目名、研究领域名称、电子邮件地址和电话号码等。尤其值得关注的是，很多学者对生物信息学领域的专用名词（如蛋白质、DNA、RNA等）及其关系识别做了大量研究工作。甚至在有些研究中并不限定“实体”的类型，而是将其看作开放域的NERC，把“命名实体”的类别按层次化结构划分，试图涵盖在报章中出现较高频率的名字和严格的指称词，类别总数达到约200种［Nadeau and Sekine, 2007］。本节主要关注人名、地名和组织机构名这三类专有名词的识别方法。</p>
+<p>与自然语言处理研究的其他任务一样，早期的命名实体识别方法大都是基于规则的。系统的实现代价较高，而且其可移植性受到一定的限制。</p>
+<p>自20世纪90年代后期以来，尤其是进入21世纪以后，基于大规模语料库的统计方法逐渐成为自然语言处理的主流，一大批机器学习方法被成功地应用于自然语言处理的各个方面。根据使用的机器学习方法的不同，我们可以粗略地将基于机器学习的命名实体识别方法划分为如下四种：有监督的学习方法、半监督的学习方法、无监督的学习方法和混合方法。表7-7对这些方法进行了简要归纳。<br><img src="/images/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%BB%9F%E8%AE%A1%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86/%E5%9F%BA%E4%BA%8E%E7%BB%9F%E8%AE%A1%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%91%BD%E5%90%8D%E5%AE%9E%E4%BD%93%E8%AF%86%E5%88%AB%E6%96%B9%E6%B3%95%E5%BD%92%E7%BA%B3.png" alt="基于统计模型的命名实体识别方法归纳"><br>有些命名实体识别工具已经公开发布在网上，供人们自由下载使用。其中，Stanford NER是美国斯坦福大学自然语言处理研究组开发的基于条件随机场模型的命名实体识别系统（Stanford Named Entity Recognizer），该系统参数是基于CoNLL、MUC-6、MUC-7和ACE命名实体语料训练出来的［Finkel et al., 2005］ 〔6〕。</p>
+<p>BANNER是美国亚利桑那州立大学开发的面向生物医学领域的英语命名实体识别系统，其基本模型也是条件随机场［Leaman and Gonzalez, 2008］ 〔7〕。</p>
+<p>MALLET是美国麻省大学（UMASS）阿姆斯特（Amherst）分校开发的一个统计自然语言处理开源软件包，包括文本分类、聚类、主题建模和信息抽取等功能，在其序列标注工具的应用中能够实现命名实体识别。该系统是利用隐马尔可夫模型、最大熵和条件随机场等模型实现的有限状态转换机 〔8〕。</p>
+<p>Minor Third是由美国卡内基·梅隆大学的William W. Cohen教授实现的，他的很多同事和学生参与了这项工作。该系统采用了条件随机场和用于隐马尔可夫模型训练的区分式训练方法等多种序列标注方法 〔9〕。</p>
+<p>YooName是加拿大渥太华大学Nadeau博士基于半监督学习方法实现的命名实体抽取和分类系统，它定义了9类命名实体，细分为100多个子类。这9类实体中除了人名、地名、组织机构名以外，还包括如下6类：①重要设施的名词，如摩天大楼、机场、学校、桥梁等；②产品名称，如交通工具名称、艺术作品名称、武器名、食品名、衣服名、药品名称等；③事件名称，如游戏名、战争名、飓风名、会议名称等；④自然界实物，如昆虫名、动物名、蔬菜名、矿物质名称等；⑤度量单位，如货币、月份、星期几等其他量词；⑥其他杂项，如疾病名称、宗教名称、语言、奖项等［Nadeau, 2007］ 〔10〕。</p>
+<p>以上介绍的几个命名实体识别或抽取系统都是针对英语文本进行的。微软亚洲研究院和上海交通大学的赵海分别开发了汉语命名实体识别系统，并在网上开放共享。微软亚洲研究院发布的S-MSRSeg汉语分词与命名实体识别工具是基于Gao et al.（2005）的工作实现的 〔11〕。赵海开发的BaseNER未切分中文文本的命名实体识别工具是基于CRF++模型实现的，使用n元语法特征设置进行参数训练［Zhao and Kit, 2008］ 〔12〕。</p>
+<h2 id="基于CRF的命名实体识别方法"><a href="#基于CRF的命名实体识别方法" class="headerlink" title="基于CRF的命名实体识别方法"></a>基于CRF的命名实体识别方法</h2><p>McCallum等最先将条件随机场（CRF）模型用于命名实体识别［McCallum and Li, 2003］。由于该方法简便易行，而且可以获得较好的性能，因此受到很多学者的青睐，已被广泛地应用于人名、地名和组织机构等各种类型命名实体的识别，并在具体应用中不断得到改进，可以说是命名实体识别中最成功的方法。</p>
+<p>关于CRF模型的基本原理，第6章已做介绍，这里不再赘述。下面只对基于CRF的命名实体识别方法采用的特征模板做简要介绍。</p>
+<p>基于CRF的命名实体识别与前面介绍的基于字的汉语分词方法的原理一样，就是把命名实体识别过程看作一个序列标注问题。其基本思路是（以汉语为例）：将给定的文本首先进行分词处理，然后对人名、简单地名和简单的组织机构名进行识别，最后识别复合地名和复合组织机构名。所谓的简单地名是指地名中不嵌套包含其他地名，如地名：北京市、大不列颠、北爱尔兰、中关村等，而“北京市海淀区中关村东路95号”、“大不列颠及北爱尔兰联合王国”、“也门民主人民共和国”则为复合地名。同样，简单的组织机构名中也不嵌套包括其他组织机构名，如北京大学、卫生部、联合国等，而“欧洲中央银行”、“中华人民共和国卫生部”、“联合国世界粮食计划署”均为复合组织机构名。</p>
+<p>基于CRF的命名实体识别方法属于有监督的学习方法，因此，需要利用已标注的大规模语料对CRF模型的参数进行训练。北京大学计算语言学研究所标注的现代汉语多级加工语料库被众多研究者用于汉语命名实体识别的模型训练。</p>
+<p>在训练阶段，首先需要将分词语料的标记符号转化成用于命名实体序列标注的标记，如用PNB表示人名的起始用字，PNI表示名字的内部用字。类似地，用LOCB表示地名的起始用字，LOCI表示地名的内部用字；ORGB表示组织机构的起始用字，ORGI表示组织机构的内部用字。用OUT统一表示该字或词不属于某个实体。例如，句子“中国积极参与亚太经合组织的活动，参加了东盟—中日韩和中国—东盟首脑非正式会晤。”经分词和词性标注后为：</p>
+<p>中国／ns积极／ad参与／v ［亚太经合／j组织／n］nt的／u活动／vn!2-1 ，/w参加／v了／u东盟／ns—/w中／j日／j韩／j和／c中国／ns—/w东盟／ns首脑／n非正式／b会晤／vn 。/w</p>
+<p>转换后，相应的标记变为：</p>
+<p>中国／OUT积极／OUT参与／OUT亚太经合／ORGB组织／ORGI的／OUT活动／OUT，/OUT参加／OUT了／OUT东盟／ORGB—/OUT中／OUT日／OUT韩／OUT和／OUT中国／OUT—/OUT东盟／ORGB首脑／OUT非正式／OUT会晤／OUT 。/OUT</p>
+<p>接下来要做的事情是确定特征模板。特征模板一般采用当前位置的前后n（n≥1）个位置上的字（或词、字母、数字、标点等，不妨统称为“字串”）及其标记表示，即以当前位置的前后n个位置范围内的字串及其标记作为观察窗口：（…$w_{－n}/tag_{－n}，…，w_{－1}/tag_{－1}w_0/tag_0，w_1/tag_1，…，w_n/tag_n，…$）。考虑到，如果窗口开得较大时，算法的执行效率会太低，而且模板的通用性较差，但窗口太小时，所涵盖的信息量又太少，不足以确定当前位置上字串的标记，因此，一般情况下将n值取为2～3，即以当前位置上前后2～3个位置上的字串及其标记作为构成特征模型的符号。</p>
+<p>由于不同的命名实体一般出现在不同的上下文语境中，因此，对于不同的命名实体识别一般采用不同的特征模板。例如，在识别汉语文本中的人名时，考虑到不同国家的人名构成特点有明显的不同，一般将人名划分为不同的类型：中国人名、日本人名、俄罗斯人名、欧美人名等。同时，考虑到出现在人名左右两边的字串对于确定人名的边界有一定的帮助作用，如某些称谓、某些动词和标点等，因此，某些总结出来的“指界词”（左指界词或右指界词）也可以作为特征。如果把人名分为中国人名、日本人名、俄罗斯人名和欧美人名四类、上下文窗口取2的话，那么，对于人名识别来说，常用的特征模板可以包括：<br>$x_w0_{sn}$：当前词是否为中国人名姓氏用字，如果是，$x_w0_{sn}$＝True，否则，$x_w0_{sn}$＝False；</p>
+<p>$x_w0_{gn}$：当前词是否为中国人名名字用字，如果是，$x_w0_{gn}$＝True，否则，$x_w0_{gn}$＝False；</p>
+<p>$x_w0_{jn}$：当前词是否为日本人名用字，如果是，$x_w0_{jn}$＝True，否则，$x_w0_{jn}$＝False；</p>
+<p>$x_w0_{an}：当前词是否为欧美人名用字，如果是，$x_w0_{an}$＝True，否则，$x_w0_{an}$＝False；</p>
+<p>$x_w0_{rn}：当前词是否为俄罗斯人名用字，如果是，$x_w0_{rn}$＝True，否则，$x_w0_{rn}$＝False；</p>
+<p>$x_{w±ib}$：当前词左右两边第i个词是否为指界词，如果是，$x_{w±ib}$＝True，否则，$x_{w±ib}$＝False。其中，i∈{1, 2}。</p>
+<p>当然，这些特征之间可以组合。于是，可以得到类似如下表示的特征函数：<br>$$<br>f\left(x_{w 0 s n}, y_{w 0 s n}\right)=<br>\begin{cases}<br>1, x_{w0sn}=True,并且 y_{w0sn}=PNB \\<br>0, 否则<br>\end{cases}<br>$$<br>特征函数确定以后，剩下的工作就是训练CRF模型参数λ。</p>
+<p>国内学者做了大量基于CRF的中文命名实体识别研究［张祝玉等，2008；郭家清，2007；向晓雯，2006］。大量的实验表明，在人名、地名、组织机构名三类实体中，组织机构名识别的性能最低。一般情况下，英语和汉语人名识别的F1值都可以达到90％左右，而组织机构名识别的F1值一般都在85％左右，这也反映出组织机构名是最难识别的一种命名实体。当然，对于不同领域和不同类型的文本，测试性能会有较大的差异。</p>
+<h2 id="基于多特征的命名实体识别方法"><a href="#基于多特征的命名实体识别方法" class="headerlink" title="基于多特征的命名实体识别方法"></a>基于多特征的命名实体识别方法</h2><p>在命名实体识别中，无论采用哪一种方法，都是试图充分发现和利用实体所在的上下文特征和实体的内部特征，只不过特征的颗粒度有大（词性和角色级特征）有小（词形特征）的问题。考虑到大颗粒度特征和小颗粒度特征有互相补充的作用，应该兼顾使用的问题，吴友政（2006）提出了基于多特征相融合的汉语命名实体识别方法，该方法是在分词和词性标注的基础上进一步进行命名实体的识别，由词形上下文模型、词性上下文模型、词形实体模型和词性实体模型4个子模型组成的。其中，词形上下文模型估计在给定词形上下文语境中产生实体的概率；词性上下文模型估计在给定词性上下文语境中产生实体的概率；词形实体模型估计在给定实体类型的情况下词形串作为实体的概率；词性实体模型估计在给定实体类型的情况下词性串作为实体的概率［吴友政，2006；Wu et al.,2003，2005］。</p>
+<h3 id="模型描述"><a href="#模型描述" class="headerlink" title="模型描述"></a>模型描述</h3><p>在基于多特征模型的命名实体识别系统中，词形包括以下几种情况：字典中任何一个字或词单独构成一类；人名（Per）、人名简称（Aper）、地名（Loc）、地名简称（Aloc）、机构名（Org）、时间词（Tim）和数量词（Num）各定义为一类。也就是说，词形语言模型中共定义了|V|＋7个词形，其中，|V|表示词典的规模。由词形构成的序列称为词形序列WC。<br>词性采用北京大学计算语言学研究所开发的汉语文本词性标注标记集 〔13〕，另加上人名简称词性和地名简称词性，共47个词性标记。由词性标记构成的序列称为词性序列TC。<br>命名实体识别可以看作一个序列化数据的标注问题。输入是带有词性标记的词序列，如表达式（7-19）：<br>$$<br>\mathrm{WT}=w_{1} / t_{1} \quad w_{2} / t_{2} \quad \cdots \quad w_{i} / t_{i} \quad \cdots \quad w_{n} / t_{n} \quad (7-19)<br>$$<br>其中，n表示句子中被分词程序切分出来的词的个数，$t_i$是标注的词$w_i$的词性。<br>在分词和词性标注的基础上进行命名实体识别的过程就是对部分词语进行拆分、组合（确定实体边界）和重新分类（确定实体类别）的过程，最后输出一个最优的“词形／词性”序列$WC^{\ast}/TC^{\ast}$，可以用式（7-20）表示：<br>$$<br>WC^\ast / TC^\ast =wc_1/tc_1 wc_2 /tc_2 \cdots wc_i / tc_i \cdots wc_m /tc_m \quad (7-20)<br>$$<br>式中，m≤n，$wc_i＝\lbrack w_j…w_{j＋k} \rbrack，tc_i＝\lbrack t_j…t_{j＋k} \rbrack，1≤k, j＋k≤n$。<br>由表达式（7-19）计算最优“词形／词性”序列WC^{\ast}/TC^{\ast}的方法有三种：词形特征模型、词性特征模型和混合模型。<br>1）词形模型</p>
+<p>词形特征模型根据词形序列W产生候选命名实体，用Viterbi确定最优词形序列$WC^{\ast}$。目前的大部分系统都是从这个层面来设计命名实体识别算法的。<br>（2）词性模型<br>词性特征模型根据词性序列T产生候选命名实体，用Viterbi确定最优词性序列$TC^{\ast}$。目前只有较少的系统，如文献［Zhou and Su, 2003; Yu et al.,1998］中的系统，在命名实体的识别过程中引入词性的知识。<br>（3）混合模型<br>词形和词性混合模型是根据词形序列W和词性序列T产生候选命名实体，一体化确定最优序列$WC^{\ast}/TC^{\ast}$，即本节将要介绍的基于多特征的识别算法。<br>为了描述方便，我们把式（7-19）拆分成两个序列，一个是词序列，另一个是词性序列，可分别用如下两个式子表示：<br>$$<br>W=w_{1} \quad w_{2} \quad \cdots \quad w_{i} \quad \cdots \quad w_{n} \quad (7-21)<br>$$<br>$$<br>T=t_{1} \quad t_{2} \quad \cdots \quad t_{i} \quad \cdots \quad t_{n} \quad (7-22)<br>$$<br>从词形层面，由表示形式（见式（7-21））进行命名实体识别的词形特征模型可以用下式描述：<br>$$<br>\mathrm{WC}^{\ast}=\underset{\mathrm{a} \mathrm{rgm}}{\operatorname{argmax}} P(\mathrm{WC}) \times P(W | \mathrm{WC}) \quad (7-23)<br>$$<br>从词性层面，由表示形式（见式（7-22））进行命名实体识别的词性特征模型可以用下式描述：<br>$$<br>\mathrm{TC}^{*}=\underset{\mathrm{TC}}{\operatorname{argmax}} P(\mathrm{TC}) \times P(T | \mathrm{TC}) \quad (7-24)<br>$$<br>词形和词性混合的汉语命名实体识别模型结合了词形特征模型和词性特征模型的优点，可以描述成下面式子的形式：<br>$$<br>\begin{align}<br>(WC^{\ast},TC^{\ast}) \\<br>&amp; = \arg \max_{(WC,TC)} P(WC,TC | W, T) \\<br>&amp; =\arg \max_{(WC,TC)} P(WC,TC,W,T)/P(W,T) \\<br>&amp; \approx \arg \max_{(WC,TC)} P(WC,W) \times \lbrack P(TC,T) \rbrack^\beta \\<br>&amp; \approx \arg \max_{(WC,TC)} P(\mathrm{WC}) \times P(W | \mathrm{WC}) \times[P(\mathrm{TC}) \times P(T | \mathrm{TC})]^{\beta}<br>\quad (7-25)<br>\end{align}<br>$$<br>式子中的β是平衡因子，平衡词形特征和词性特征的权重，β＞0。<br>模型（7-25）由四部分组成，分别称之为：词形上下文模型P（WC）、词性上下文模型P（TC）、实体词形模型P（W|WC）和实体词性模型P（T|TC）。实体词形模型和实体词性模型统称为实体模型。以下分别介绍这些模型。</p>
+<h3 id="词形和词性上下文模型"><a href="#词形和词性上下文模型" class="headerlink" title="词形和词性上下文模型"></a>词形和词性上下文模型</h3><p>上下文模型估计在给定的上下文语境中产生实体的词形和词性概率。词形上下文模型和词性上下文模型均可采用三元语法模型近似描述：<br>$$<br>P(WC) \approx \prod_{i=1}^{m} P\left(wc_i | wc_{i-2} wc_{i-1}\right) \quad (7-26)<br>$$<br>$$<br>P(TC) \approx \prod_{i=1}^{m} P\left(tc_{i} | tc_{i-2} tc_{i-1}\right) \quad (7-27)<br>$$<br>其中，m，$wc_i$和$tc_i$的含义与表达式（7-20）中的含义一致。当i＝1时，取一元语法概率$P（wc_1）$和$P（tc_1）$；当i＝2时，取二元语法概率$P（wc_2|wc_1）$和$P（tc_2|tc_1）$</p>
+<h3 id="实体模型"><a href="#实体模型" class="headerlink" title="实体模型"></a>实体模型</h3><p>考虑到每一类命名实体都具有不同的内部特征，因此，不能用一个统一的模型刻画人名、地名和机构名等实体模型。例如，人名识别可采用基于字的三元模型，地名和机构名识别可能更适合于采用基于词的三元模型等。此外，为提高外国人名的识别性能，吴友政（2006）又把外国人名进一步划分为日本人名、欧美人名和俄罗斯人名三个子类。因为这三类人名的内部特征（主要是人名用字集）存在较大的差别，日本人名用字相对较广，具有相对明显的姓氏特征，但姓氏集合却很大（现版本共收集日本人名姓氏9189个），而且，日本人名姓氏很多和地名重叠。俄罗斯人名常用斯、基、娃等汉字，而欧美人名常用朗、鲁、伦、曼等汉字。为计算需要，按照字或词在命名实体内部的位置，吴友政把这些字或词划分成19个子类，如下表所示。<br><img src="/images/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%BB%9F%E8%AE%A1%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86/%E5%AE%9E%E4%BD%93%E6%A8%A1%E5%9E%8B%E4%B8%AD%E7%9A%84%E5%AD%90%E7%B1%BB%E5%AE%9A%E4%B9%89.png" alt="实体模型中的子类定义"><br>有了上述分类之后，人名、普通地名和机构名、单字地名和简称机构名分别建立相应的实体模型。<br>（略。。。不写了，情况多，公式多。在参考资料里面下载书自己看吧）<br>上述结果表明，基于多特征模型的命名实体识别方法综合运用了词形特征和词性特征的作用，针对不同实体的结构特点，分别建立实体识别模型，并利用专家知识限制明显不合理的实体候选的产生，从而提高了识别性能和系统效率。</p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p>《统计自然语言处理》（第二版）  宗成庆 著 清华大学出版社 <a href="/books/mobi/统计自然语言处理（第2版）.mobi">统计自然语言处理.mobi下载</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/nlp/" rel="tag"><i class="fa fa-tag"></i> nlp</a>
+          
+            <a href="/tags/统计自然语言处理/" rel="tag"><i class="fa fa-tag"></i> 统计自然语言处理</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/18/统计自然语言处理-自动分词/" rel="next" title="统计自然语言处理-自动分词">
+                <i class="fa fa-chevron-left"></i> 统计自然语言处理-自动分词
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/05/05/2019北大信工考研经验/" rel="prev" title="2019北大信工考研经验">
+                2019北大信工考研经验 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="Arvin_Zhang">
+            
+              <p class="site-author-name" itemprop="name">Arvin_Zhang</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/zhangweifeng919" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:zhangweifeng919@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#命名实体识别"><span class="nav-number">1.</span> <span class="nav-text">命名实体识别</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#方法概述"><span class="nav-number">1.1.</span> <span class="nav-text">方法概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于CRF的命名实体识别方法"><span class="nav-number">1.2.</span> <span class="nav-text">基于CRF的命名实体识别方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于多特征的命名实体识别方法"><span class="nav-number">1.3.</span> <span class="nav-text">基于多特征的命名实体识别方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#模型描述"><span class="nav-number">1.3.1.</span> <span class="nav-text">模型描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#词形和词性上下文模型"><span class="nav-number">1.3.2.</span> <span class="nav-text">词形和词性上下文模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实体模型"><span class="nav-number">1.3.3.</span> <span class="nav-text">实体模型</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-number">2.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Arvin_Zhang</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count"></span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+    console.log("已经推送");
+})();
+</script>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'kjMy4Wir9L7O2wDtjHexeyl8-gzGzoHsz',
+        appKey: 'zruMkYmFF2lxyMAreQ8AdUWr',
+        placeholder: '欢迎提问，一起讨论\(^o^)/~',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("kjMy4Wir9L7O2wDtjHexeyl8-gzGzoHsz", "zruMkYmFF2lxyMAreQ8AdUWr");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

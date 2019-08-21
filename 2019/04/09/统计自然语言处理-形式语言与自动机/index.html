@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+  
+  
+  <link rel="stylesheet" media="all" href="/lib/Han/dist/han.min.css?v=3.3">
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="nlp,统计自然语言处理,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="形式语言理论是自然语言描述和分析的基础，自动机理论在自然语言的词法分析，拼写检查和短语识别等方面都有广泛的用途。">
+<meta name="keywords" content="nlp,统计自然语言处理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="统计自然语言处理-形式语言与自动机">
+<meta property="og:url" content="https://zhangweifeng.top/2019/04/09/统计自然语言处理-形式语言与自动机/index.html">
+<meta property="og:site_name" content="漂泊在学海">
+<meta property="og:description" content="形式语言理论是自然语言描述和分析的基础，自动机理论在自然语言的词法分析，拼写检查和短语识别等方面都有广泛的用途。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://zhangweifeng.top/images/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%BB%9F%E8%AE%A1%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86/%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA%E5%8E%9F%E7%90%86%E7%A4%BA%E6%84%8F%E5%9B%BE.png">
+<meta property="og:image" content="https://zhangweifeng.top/images/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%BB%9F%E8%AE%A1%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86/%E5%9B%BE%E7%81%B5%E6%9C%BA%E7%9A%84%E6%A0%BC%E5%B1%80.png">
+<meta property="og:updated_time" content="2019-08-20T15:51:00.157Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="统计自然语言处理-形式语言与自动机">
+<meta name="twitter:description" content="形式语言理论是自然语言描述和分析的基础，自动机理论在自然语言的词法分析，拼写检查和短语识别等方面都有广泛的用途。">
+<meta name="twitter:image" content="https://zhangweifeng.top/images/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%BB%9F%E8%AE%A1%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86/%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA%E5%8E%9F%E7%90%86%E7%A4%BA%E6%84%8F%E5%9B%BE.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zhangweifeng.top/2019/04/09/统计自然语言处理-形式语言与自动机/">
+
+
+
+
+
+  <title>统计自然语言处理-形式语言与自动机 | 漂泊在学海</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">漂泊在学海</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">学海无涯，回头是岸</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zhangweifeng.top/2019/04/09/统计自然语言处理-形式语言与自动机/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Arvin_Zhang">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="漂泊在学海">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">统计自然语言处理-形式语言与自动机</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-09T10:03:57+08:00">
+                2019-04-09
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2019-08-20T23:51:00+08:00">
+                2019-08-20
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/读书笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">读书笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/04/09/统计自然语言处理-形式语言与自动机/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/04/09/统计自然语言处理-形式语言与自动机/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2019/04/09/统计自然语言处理-形式语言与自动机/" class="leancloud_visitors" data-flag-title="统计自然语言处理-形式语言与自动机">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+           
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  
+                </span>
+              
+
+              
+
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  形式语言理论是自然语言描述和分析的基础，自动机理论在自然语言的词法分析，拼写检查和短语识别等方面都有广泛的用途。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body han-init-context" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="形式语言"><a href="#形式语言" class="headerlink" title="形式语言"></a>形式语言</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p> 乔姆斯基曾经把语言定义为：按照一定规律构成的句子和符号串有限或无限的集合。我国学者吴蔚天认为，可以把语言看成一个抽象的数学系统。无论把语言看成集合还是数学系统，我们都可以用数学的方法进行刻画和描述<br> 一般，描述一种语言可以有三种途径：<br> （1）穷举法：把语言中的所有句子枚举出来。显然只适合句子数目有限的语言。<br> （2）文法（产生式系统）描述：语言中的每个句子都用严格定义的规则来构造，利用规则生成语言中合法的句子。<br> （3）自动机法：通过对输入句子进行合法性检验，区别哪些是语言中的句子，哪些不是语言中的句子。<br> 文法用来精确地描述语言和其结构，自动机则是用来机械地刻画对输入字符串的识别过程。用文法来定义语言的优点是：由文法给予语言中的句子以结构，各成分之间的结构关系清楚、明了。但是，如果要直接用这些规则来确定一个字符串是否属于这套规则所定义的语言似乎并不十分明确。而由自动机来识别一个字符串是否属于该语言则相对简单，但自动机很难描述语言的结构。所以自然语言处理中的识别和分析算法，大多兼取两者之长。</p>
+<h2 id="形式语法的定义"><a href="#形式语法的定义" class="headerlink" title="形式语法的定义"></a>形式语法的定义</h2><p>形式语言是用来精确描述语言（包括人工语言和自然语言）及其结构的手段。形式语言学也称代数语言学。<br>形式语法：形式语法是一个四元组$G=(N,\Sigma,P,S)$,其中，N是非终结符（non-terminal symbol）的有限集合；$ \Sigma $是终结符号；$V= {N \cup \Sigma}$ 称为总词汇表；P是一组重写规则的有限集合：$P={\alpha \to \beta}$，其中，$\alpha,\beta$是V中元素构成的串，但是$\alpha$中至少应该含有一个非终结符号；$S \in N$称为句子符或初始符。</p>
+<h2 id="形式语法的类型"><a href="#形式语法的类型" class="headerlink" title="形式语法的类型"></a>形式语法的类型</h2><p>在乔姆斯基的语法理论中，文法被划分为4种类型：3型文法，2型文法，1型文法和0型文法，分别称为正则文法，上下文无关文法，上下文相关文法和无约束文法。</p>
+<h3 id="正则文法"><a href="#正则文法" class="headerlink" title="正则文法"></a>正则文法</h3><p>如果文法G的规则集P中所有规则均满足如下形式：$A \to Bx ,或A \to x,其中，A，B \in N, x \in \Sigma$，则称该文法G为正则文法，或称3型文法。<br>在这种书写格式中，由于规则右部的非终结符号（如果有的话）出现在最左边，所以，这种形式的正则文法又叫左线性正则文法。类似地，如果一正则文法所有含非终结符号的规则形式为$A \to xB$，则该文法称为右线性正则文法。</p>
+<h3 id="上下文无关文法"><a href="#上下文无关文法" class="headerlink" title="上下文无关文法"></a>上下文无关文法</h3><p>如果文法G的规则集P中所有规则均满足如下形式：$ A \to \alpha，其中，A \in N，\alpha \in (N \cup \Sigma)^*$,则称文法G为上下文无关文法（context-free grammar ,CFG），或称为2型文法。从定义上我们可以看出，2型文法比3型文法少了一层限制，其规则右端的格式没有约束。</p>
+<h3 id="上下文有关文法"><a href="#上下文有关文法" class="headerlink" title="上下文有关文法"></a>上下文有关文法</h3><p>如果文法G的规则集P中所有规则满足如下形式：$\alpha A \beta \to \alpha \gamma \beta$，其中，$A \in N $，$\alpha，\beta，\gamma$ $ \in (N \cup \Sigma)^*$，且$\gamma$至少包含一个字符，则称文法G为上下文有关文法（context-sensitive grammar,CSG），或称1型文法。<br>从上述定义可以看出，字符串$\alpha \gamma \beta$中的A被改写成$\Sigma$时需要有上文语境$\alpha$和下文语境$\beta$，这体现了上下文相关的含义。当然，$\alpha$和$\beta$可以为空字符$\varepsilon$，如果$\alpha$和$\beta$同时为空时，1型文法变成了2型文法。也就是说，2型文法是1型文法的特例。因此，1型文法可识别的语言集合比2型文法可识别的语言集合更大。</p>
+<h3 id="无约束文法"><a href="#无约束文法" class="headerlink" title="无约束文法"></a>无约束文法</h3><p>如果文法G的规则集P中所有规则满足如下形式：$\alpha \to \beta$，其中，$\alpha \in (N \cup \Sigma)^+$，$\beta \in (N \cup \Sigma)^*$，则称为无约束文法或者无限制重写系统，也称为0型文法。<br>根据上述定义我们不难看出，从0型文法到3型文法，对规则的约束越来越多，每一个正则文法都是上下文无关文法，每一个上下无关文法都是上下文有关文法，而每一个上下文有关文法都可以认为是0型文法。因此，从0型文法到3型文法所识别的语言集合越来越小。<br>我们约定，如果一个文法的产生式集合P中，有分属于不同类型文法的产生式，则把属于包含最广类型文法的那条产生式所属的类型作为这个文法的类型。比如说，某个文法的全部规则分别属于1型文法、2型文法和3型文法，则我们称这个文法为1型文法。同理，如果一种语言能够由几种文法所产生，则把这种语言称为在这几种文法中受限制最多的那种文法所产生的语言。</p>
+<h3 id="CFG识别句子的派生树表示"><a href="#CFG识别句子的派生树表示" class="headerlink" title="CFG识别句子的派生树表示"></a>CFG识别句子的派生树表示</h3><p>一个上下文无关文法$G=(N,\Sigma,P,S)$产生句子的过程可以由派生树表示。派生树也称语法树（syntactic tree），分析树(parsing tree)，推导树。派生树构造步骤如下：<br>（1）对于任意$x \in N \cup \Sigma$，给一个标记作为节点，令文法的初始符号S作为树的根节点；<br>（2）如果一个节点的标记为A，且至少有一个除它自身以外的后裔，那么$A \in N$。<br>（3）如果一个节点的标记为A，它的k(k&gt;0)个直接后裔节点按从左到右的顺序依次标记为$A_1,A_2,…,A_k$，则$A \to A_1,A_2,…,A_k$一定是P中的一个产生式。</p>
+<h3 id="二义性文法"><a href="#二义性文法" class="headerlink" title="二义性文法"></a>二义性文法</h3><p>如果文法G对于同一个句子存在两颗或两棵以上不同的分析叔，那么，该该句子是二义性的，文法G为二义性文法。</p>
+<h1 id="自动机理论"><a href="#自动机理论" class="headerlink" title="自动机理论"></a>自动机理论</h1><p>自动机是一种理想化的“机器”，它只是抽象分析问题的理论工具，并不具有实际的物质形态。它是科学定义的演算机器，用来表达某种不需要人力干涉的机械性演算过程。根据不同的构成和功能，自动机分成以下4种类型：有限自动机（finite automata,FA）、下推自动机（push-down automata,PDA）、线性界限自动机（linear-boundedautomata）和图灵机（Turing machine）。</p>
+<h2 id="有限自动机"><a href="#有限自动机" class="headerlink" title="有限自动机"></a>有限自动机</h2><p>有限自动机又分为确定性有限自动机（definite automata, DFA）和不确定性有限自动机（non-definite automata, NFA）两种。</p>
+<p>确定性有限自动机（DFAM)是一个五元组<br>$$M＝(Σ，Q，δ，q_0，F)$$<br>其中，Σ是输入符号的有穷集合；Q是状态的有限集合；q0∈Q是初始状态；F是终止状态集合，F⊆Q；δ是Q与Σ的直积Q×Σ到Q（下一个状态）的映射，它支配着有限状态控制的行为，有时也称为状态转移函数。</p>
+<p>不确定性有限自动机（NFAM)是一个五元组<br>$$M＝(Σ,Q,δ,q_0，F)$$<br>其中，Σ是输入符号的有穷集合；Q是状态的有限集合；q0∈Q是初始状态；F是终止状态集合，F⊆Q；δ是Q与Σ的直积Q×Σ到Q的幂集2Q的映射。<br>NFA与DFA的重要区别是：在NFA中δ（q, a）是一个状态集合，而在DFA中δ（q, a）是一个状态。根据定义，对于NFAM有映射：<br>$δ（q, a）＝{q_1，q_2，…，q_k}$，k≥1<br>其含义是：NFAM在状态q时，接受输入符号a时，M可以选择状态集q1，q2，…，qk中的任何一个状态作为下一个状态，并将输入头向右边移动一个字符的位置。</p>
+<h3 id="确定性有限自动机和不确定性有限自动机的关系"><a href="#确定性有限自动机和不确定性有限自动机的关系" class="headerlink" title="确定性有限自动机和不确定性有限自动机的关系"></a>确定性有限自动机和不确定性有限自动机的关系</h3><p>定理：设L是被NFAM所接受的语言，则存在一个DFAM，它能够接受L。可以用数学归纳法证明该定理，关于其证明过程，不再赘述。</p>
+<h3 id="正则文法与自动机的关系"><a href="#正则文法与自动机的关系" class="headerlink" title="正则文法与自动机的关系"></a>正则文法与自动机的关系</h3><p>若$G＝(V_N，V_T，P，S)$是一个正则文法，则存在一个$FAM＝(Σ，Q，δ,q_0，F)$，使得T(M)＝L(G)。<br>若$M＝(Σ，Q，δ,q_0，F)是一个有限自动机，则存在一个正则文法$G＝(V_N，V_T，P，S)$，使得L(G)＝T(M)。<br>根据上面介绍的三个定理可以得到一个重要结论：对于任意一个正则文法所产生的语言，总可以构造一个确定的有限自动机识别它。也就是说，对于任意一个正则文法，总可以构造一个确定的有限自动机。</p>
+<h2 id="上下文无关文法与下推自动机"><a href="#上下文无关文法与下推自动机" class="headerlink" title="上下文无关文法与下推自动机"></a>上下文无关文法与下推自动机</h2><p>下推自动机（PDA）可以看成是一个带有附加下推存储器的有限自动机，下推存储器是一个堆栈（stack）。其原理示意图如图3-7所示：<br><img src="/images/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%BB%9F%E8%AE%A1%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86/%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA%E5%8E%9F%E7%90%86%E7%A4%BA%E6%84%8F%E5%9B%BE.png" alt="下推自动机原理示意图"></p>
+<p>不确定的下推自动机（PDA）可以表达成一个七元组：<br>$$M＝（Σ，Q，Γ，δ，q_0，Z_0，F）$$<br>其中，Σ是输入符号的有穷集合；Q是状态的有限集合；Γ为下推存储器符号的有穷集合；$q_0∈Q$是初始状态；$Z_0∈Γ$为最初出现在下推存储器顶端的开始符号；F⊆Q是终止状态集合；δ是从Q×(Σ∪{ε})×Γ到Q× $ {\Gamma}^{\ast} $的子集的映射。<br>$$  \delta (q,a,Z)={(q_1,γ_1)，(q_2,γ_2)，(q_3,γ_3)，…，(q_m,γ_m) }     $$<br>其中，$q_1，q_2，…，q_m∈Q$，$a∈Σ，Z∈Γ，γ_1，γ_2，…，γ_m∈Γ^*$。上式的含义是：当下推自动机处于状态q，接受输入符号a时，自动机将进入到$q_i$（i＝1,2，…，m）状态，并以$γ_i$来代替下推存储器（栈）顶端符号Z，同时将输入头指向下一个字符。当Z被$γ_i$取代时，$γ_i$的符号按照从左到右的顺序依次从下向上推入到存储器。<br>特殊情况下，$δ（q，ε，Z）＝{（q_1，γ_1），（q_2，γ_2），…，（q_m，γ_m）}$时，意味着下推自动机处于状态q时没有接受任何输入符号，因此，输入头位置不移动，只用于处理下推存储器内部的操作，自动机进入到$q_i（i＝1,2，…，m）$状态，并以$γ_i$来代替下推存储器（栈）顶端符号Z。这个操作叫做“ε移动”。</p>
+<p>定理3-4　设L（G）为上下文无关文法语言，则存在一个PDA M＝（Σ，Q，Γ，δ，$q_0$，$Z_0$，F）使得该PDA以空存储器标准所接受的语言N（M）＝L（G）。</p>
+<p>定理3-5　设N（M）为由PDA M＝（Σ，Q，Γ，δ, $q_0$，$Z_0$，F）以空存储器标准所接受的语言，则存在一个CFG使得L（G）＝N（M）。</p>
+<h2 id="图灵机"><a href="#图灵机" class="headerlink" title="图灵机"></a>图灵机</h2><p>图灵机与有限自动机的区别在于图灵机可以通过其读写头改变输入带上的字符，而有限自动机不能做到这一点。</p>
+<p>一个图灵机T可以表达成一个六元组：T＝（Σ，Q，Γ，δ, $q_0$，F）其中，Σ是输入／输出带上字符的有穷集合，不包含空白符号B；Q是状态的有限集合；Γ是输入符号的有穷集合，包含空符号B，Σ⊆Γ，Γ＝Σ∪{B}；$q_0$∈Q是初始状态；F是终止状态集合，F⊆Q；δ是从Q×Γ到Q×（Γ-{B}）×{R，L，S}子集的一个映射。其中，R，L，S分别表示右移一格、左移一格和停止不动。</p>
+<p><img src="/images/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%BB%9F%E8%AE%A1%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86/%E5%9B%BE%E7%81%B5%E6%9C%BA%E7%9A%84%E6%A0%BC%E5%B1%80.png" alt="图灵机的格局"></p>
+<p>图灵机和0型文法的关系可以通过定理3-6和定理3-7来说明。</p>
+<p>定理3-6　如果L是一个由0型文法产生的语言，则L可被一个图灵机所接受。</p>
+<p>定理3-7　如果L可被一个图灵机所接受，则L是一个由0型文法产生的语言。</p>
+<h2 id="线性界限自动机"><a href="#线性界限自动机" class="headerlink" title="线性界限自动机"></a>线性界限自动机</h2><p>线性界限自动机是一个确定的单带图灵机，其读／写头不能超越原输入带上字符串的初始和终止位置，即线性界限自动机的存储空间被输入符号串的长度所限制。</p>
+<p>定义3-24（线性界限自动机）　一个线性界限自动机M可以表达成一个六元组：<br>M＝（Σ，Q，Γ，δ,$q_0$，F）<br>其中，Γ是输入／输出带上符号的有穷集合；Q是状态的有限集合；Σ是输入／输出带上字符的有穷集合，Σ⊆Γ；$q_0$∈Q是初始状态；F是终止状态集合，F⊆Q；δ是从Q×Γ到Q×Γ×{R，L}子集的映射。Σ包括两个特殊符号#和$，分别表示输入链的左端和右端结束标志。<br>线性界限自动机M的格局，以及两个格局之间转移关系的定义与图灵机的相同。线性界限自动机与图灵机的唯一不同是对读／写头位置的限制。在线性界限自动机中，对于读／写头超出输入字符串长度范围时，转移动作没有定义。</p>
+<h2 id="自动机在自然语言中的应用"><a href="#自动机在自然语言中的应用" class="headerlink" title="自动机在自然语言中的应用"></a>自动机在自然语言中的应用</h2><p>单词拼写检查<br>单词形态分析<br>词性消岐</p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p>《统计自然语言处理》（第二版）  宗成庆 著 清华大学出版社 <a href="/books/mobi/统计自然语言处理（第2版）.mobi">统计自然语言处理.mobi下载</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/nlp/" rel="tag"><i class="fa fa-tag"></i> nlp</a>
+          
+            <a href="/tags/统计自然语言处理/" rel="tag"><i class="fa fa-tag"></i> 统计自然语言处理</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/08/支持向量机SVM推导/" rel="next" title="支持向量机SVM推导">
+                <i class="fa fa-chevron-left"></i> 支持向量机SVM推导
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/11/统计自然语言处理-语料库与语言知识库/" rel="prev" title="统计自然语言处理-语料库与语言知识库">
+                统计自然语言处理-语料库与语言知识库 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="Arvin_Zhang">
+            
+              <p class="site-author-name" itemprop="name">Arvin_Zhang</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/zhangweifeng919" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:zhangweifeng919@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#形式语言"><span class="nav-number">1.</span> <span class="nav-text">形式语言</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#形式语法的定义"><span class="nav-number">1.2.</span> <span class="nav-text">形式语法的定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#形式语法的类型"><span class="nav-number">1.3.</span> <span class="nav-text">形式语法的类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#正则文法"><span class="nav-number">1.3.1.</span> <span class="nav-text">正则文法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#上下文无关文法"><span class="nav-number">1.3.2.</span> <span class="nav-text">上下文无关文法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#上下文有关文法"><span class="nav-number">1.3.3.</span> <span class="nav-text">上下文有关文法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#无约束文法"><span class="nav-number">1.3.4.</span> <span class="nav-text">无约束文法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CFG识别句子的派生树表示"><span class="nav-number">1.3.5.</span> <span class="nav-text">CFG识别句子的派生树表示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二义性文法"><span class="nav-number">1.3.6.</span> <span class="nav-text">二义性文法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#自动机理论"><span class="nav-number">2.</span> <span class="nav-text">自动机理论</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#有限自动机"><span class="nav-number">2.1.</span> <span class="nav-text">有限自动机</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#确定性有限自动机和不确定性有限自动机的关系"><span class="nav-number">2.1.1.</span> <span class="nav-text">确定性有限自动机和不确定性有限自动机的关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#正则文法与自动机的关系"><span class="nav-number">2.1.2.</span> <span class="nav-text">正则文法与自动机的关系</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#上下文无关文法与下推自动机"><span class="nav-number">2.2.</span> <span class="nav-text">上下文无关文法与下推自动机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#图灵机"><span class="nav-number">2.3.</span> <span class="nav-text">图灵机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线性界限自动机"><span class="nav-number">2.4.</span> <span class="nav-text">线性界限自动机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自动机在自然语言中的应用"><span class="nav-number">2.5.</span> <span class="nav-text">自动机在自然语言中的应用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-number">3.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Arvin_Zhang</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count"></span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+    console.log("已经推送");
+})();
+</script>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'kjMy4Wir9L7O2wDtjHexeyl8-gzGzoHsz',
+        appKey: 'zruMkYmFF2lxyMAreQ8AdUWr',
+        placeholder: '欢迎提问，一起讨论\(^o^)/~',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("kjMy4Wir9L7O2wDtjHexeyl8-gzGzoHsz", "zruMkYmFF2lxyMAreQ8AdUWr");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

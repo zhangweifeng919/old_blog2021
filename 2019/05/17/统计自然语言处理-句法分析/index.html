@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+  
+  
+  <link rel="stylesheet" media="all" href="/lib/Han/dist/han.min.css?v=3.3">
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="nlp,统计自然语言处理,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="句法分析（syntactic parsing）是自然语言处理中的关键技术之一，其基本任务是确定句子的句法结构（syntactic structure）或句子中词汇之间的依存关系。一般来说，句法分析并不是一个自然语言处理任务的最终目标，但是，它往往是实现最终目标的重要环节，甚至是关键环节。因此，在自然语言处理研究中，句法分析始终是众多专家关注的核心问题之一，围绕这一问题人们不断提出各种新的理论和方法">
+<meta name="keywords" content="nlp,统计自然语言处理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="统计自然语言处理-句法分析">
+<meta property="og:url" content="https://zhangweifeng.top/2019/05/17/统计自然语言处理-句法分析/index.html">
+<meta property="og:site_name" content="漂泊在学海">
+<meta property="og:description" content="句法分析（syntactic parsing）是自然语言处理中的关键技术之一，其基本任务是确定句子的句法结构（syntactic structure）或句子中词汇之间的依存关系。一般来说，句法分析并不是一个自然语言处理任务的最终目标，但是，它往往是实现最终目标的重要环节，甚至是关键环节。因此，在自然语言处理研究中，句法分析始终是众多专家关注的核心问题之一，围绕这一问题人们不断提出各种新的理论和方法">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://zhangweifeng.top/images/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%BB%9F%E8%AE%A1%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86/%E5%9B%BE8-1%E5%8F%A5%E6%B3%95%E5%88%86%E6%9E%90%E6%A0%91%E7%A4%BA%E4%BE%8B.png">
+<meta property="og:image" content="https://zhangweifeng.top/images/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%BB%9F%E8%AE%A1%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86/%E8%A1%A88-1%E5%B8%B8%E7%94%A8%E7%9F%AD%E8%AF%AD%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90%E5%99%A8.png">
+<meta property="og:image" content="https://zhangweifeng.top/images/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%BB%9F%E8%AE%A1%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86/PCFG%E4%BE%8B%E5%AD%90%E8%AF%AD%E6%B3%95.png">
+<meta property="og:image" content="https://zhangweifeng.top/images/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%BB%9F%E8%AE%A1%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86/PCFG%E4%BE%8B%E5%AD%90%E8%AF%AD%E6%B3%95%E6%A0%91.png">
+<meta property="og:updated_time" content="2019-08-20T15:51:00.156Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="统计自然语言处理-句法分析">
+<meta name="twitter:description" content="句法分析（syntactic parsing）是自然语言处理中的关键技术之一，其基本任务是确定句子的句法结构（syntactic structure）或句子中词汇之间的依存关系。一般来说，句法分析并不是一个自然语言处理任务的最终目标，但是，它往往是实现最终目标的重要环节，甚至是关键环节。因此，在自然语言处理研究中，句法分析始终是众多专家关注的核心问题之一，围绕这一问题人们不断提出各种新的理论和方法">
+<meta name="twitter:image" content="https://zhangweifeng.top/images/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%BB%9F%E8%AE%A1%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86/%E5%9B%BE8-1%E5%8F%A5%E6%B3%95%E5%88%86%E6%9E%90%E6%A0%91%E7%A4%BA%E4%BE%8B.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zhangweifeng.top/2019/05/17/统计自然语言处理-句法分析/">
+
+
+
+
+
+  <title>统计自然语言处理-句法分析 | 漂泊在学海</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">漂泊在学海</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">学海无涯，回头是岸</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zhangweifeng.top/2019/05/17/统计自然语言处理-句法分析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Arvin_Zhang">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="漂泊在学海">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">统计自然语言处理-句法分析</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-17T11:29:16+08:00">
+                2019-05-17
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2019-08-20T23:51:00+08:00">
+                2019-08-20
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/读书笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">读书笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/05/17/统计自然语言处理-句法分析/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/05/17/统计自然语言处理-句法分析/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2019/05/17/统计自然语言处理-句法分析/" class="leancloud_visitors" data-flag-title="统计自然语言处理-句法分析">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+           
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  
+                </span>
+              
+
+              
+
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  句法分析（syntactic parsing）是自然语言处理中的关键技术之一，其基本任务是确定句子的句法结构（syntactic structure）或句子中词汇之间的依存关系。一般来说，句法分析并不是一个自然语言处理任务的最终目标，但是，它往往是实现最终目标的重要环节，甚至是关键环节。因此，在自然语言处理研究中，句法分析始终是众多专家关注的核心问题之一，围绕这一问题人们不断提出各种新的理论和方法。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body han-init-context" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>句法分析（syntactic parsing）是自然语言处理中的关键技术之一，其基本任务是确定句子的句法结构（syntactic structure）或句子中词汇之间的依存关系。一般来说，句法分析并不是一个自然语言处理任务的最终目标，但是，它往往是实现最终目标的重要环节，甚至是关键环节。因此，在自然语言处理研究中，句法分析始终是众多专家关注的核心问题之一，围绕这一问题人们不断提出各种新的理论和方法。</p>
+<p>句法分析分为句法结构分析（syntactic structure parsing）和依存关系分析（dependency parsing）两种。句法结构分析又可称为成分结构分析（constituent structure parsing）或短语结构分析（phrase structure parsing）。以获取整个句子的句法结构为目的的句法分析称为完全句法分析（full syntactic parsing）或者完全短语结构分析（full phrase structure parsing）（有时简称full parsing），而以获得局部成分（如基本名词短语（base NP））为目的的句法分析称为局部分析（partial parsing）或称浅层分析（shallow parsing）。依存关系分析又称依存句法分析或依存结构分析，简称依存分析。</p>
+<p>本章首先简要介绍句法结构分析的相关内容，然后详细介绍统计句法结构分析的基本方法和几个典型的短语结构分析器（phrase structure parser），再次介绍汉语长句句法分析和浅层句法分析的相关工作，最后介绍依存关系分析方法。</p>
+<h1 id="句法结构分析概述"><a href="#句法结构分析概述" class="headerlink" title="句法结构分析概述"></a>句法结构分析概述</h1><h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><p>句法结构分析是指对输入的单词序列（一般为句子）判断其构成是否合乎给定的语法，分析出合乎语法的句子的句法结构。句法结构一般用树状数据结构表示，通常称为句法分析树（syntactic parsing tree），简称分析树（parsing tree）。完成这种分析过程的程序模块称为句法结构分析器（syntactic parser），通常简称为分析器（parser）。</p>
+<p>一般而言，句法结构分析的任务有三个：①判断输入的字符串是否属于某种语言；②消除输入句子中词法和结构等方面的歧义；③分析输入句子的内部结构，如成分构成、上下文关系等。如果一个句子有多种结构表示，句法分析器应该分析出该句子最有可能的结构。有时人们也将句法结构分析称为语言或句子识别。由于在实际应用过程中，通常系统都已经知道或者默认了被分析的句子属于哪一种语言，因此，一般不考虑任务①，而着重考虑任务②和③的处理问题。<br>如果有一词典已经对英语单词the，can，hold，water标注了如下词性信息：</p>
+<p>the：art（冠词）；</p>
+<p>can：n，aux，v（n、v分别表示名词和动词，下同；aux表示助动词）；</p>
+<p>hold：v</p>
+<p>water：n，v</p>
+<p>给定如下句法规则：<br>$$<br>S \to NP \quad VP \\<br>NP \to art \quad n \\<br>NP \to aux \quad VP \\<br>VP \to v \quad NP<br>$$<br>句子The can can hold the water的分析树如图8-1所示。<br><img src="/images/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%BB%9F%E8%AE%A1%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86/%E5%9B%BE8-1%E5%8F%A5%E6%B3%95%E5%88%86%E6%9E%90%E6%A0%91%E7%A4%BA%E4%BE%8B.png" alt="句法分析树示例"><br>在绪论中已经指出，词法歧义和结构歧义等各种类型的歧义在自然语言中普遍存在，而句法结构歧义的识别和消解是句法分析面临的主要困难。<br>一般来说，构造一个句法分析器需要考虑两部分工作：一部分是语法的形式化表示和词条信息描述问题。形式化的语法规则构成了规则库，词条信息（包括词性、动词的配价和中心词信息等）由词典或相关词表提供，规则库与词典或相关词表构成了句法分析的知识库；另一部分工作是分析算法的设计。</p>
+<h2 id="语法形式化"><a href="#语法形式化" class="headerlink" title="语法形式化"></a>语法形式化</h2><p>语法形式化（grammar formalism）属于句法理论研究的范畴。目前在自然语言处理中广泛使用的是上下文无关文法（CFG）和基于约束的文法（constraint-based grammar）的简单形式，后者又称为合一语法（unification grammar）。关于CFG，我们已经在第3章介绍有关形式语言与自动机时有过比较详细的描述，这里不再赘述。合一文法目前已经形成了在自然语言处理中被广泛采用的一种形式化表示类型。尤其是当有关研究宣称，与扩展的转移网络（augmented transition networks，ATNs）等早期框架相比，从语法工程和语法可重用性（reusability）的前景来看，基于约束的形式化方法具有更多的优越性以后，这种形式化方法得到了更广泛的应用［Samuelsson and Wiren,2000］。</p>
+<p>常用的基于约束的语法有：</p>
+<p>（1）功能合一语法（functional unification grammar，FUG）［Kay，1984］；</p>
+<p>（2）树链接语法（tree-adjoining grammar，TAG）［Joshi et al.，1975］；</p>
+<p>（3）词汇功能语法（lexical-functional grammar，LFG）［Bresnan，1982］；</p>
+<p>（4）广义的短语结构语法（generalized phrase structure grammar，GPSG）［Gazdar et al.，1985］；</p>
+<p>（5）中心语驱动的短语结构语法（head-driven phrase structure grammar，HPSG）［Pollard and Sag，1994］。</p>
+<p>关于这些语法的详细介绍，有兴趣的读者可以参考相关文献。</p>
+<h2 id="基本方法"><a href="#基本方法" class="headerlink" title="基本方法"></a>基本方法</h2><p>简单地讲，句法结构分析方法可以分为基于规则的分析方法和基于统计的分析方法两大类。基于规则的句法结构分析方法的基本思路是，由人工组织语法规则，建立语法知识库，通过条件约束和检查来实现句法结构歧义的消除［Allen，1995］。在过去的几十年里，人们先后提出了若干有影响力的句法分析算法，诸如：CYK分析算法（Cocke-Younger-Kasami parsing）［Kasami，1965；Younger，1967］、欧雷分析算法（Earley parsing）［Earley，1970］、线图分析算法（chart parsing）［Kay，1980；Allen，1995］、移进-规约算法（shift-reduction parsing）［Aho and Ullman，1972］、GLR分析算法（generalized LR parsing）［Tomita，1985］和左角分析算法（left-corner parsing） 〔1〕，等等。人们对这些算法做了大量的改进工作，并将其应用于自然语言处理的相关研究和开发任务，例如：机器翻译、树库标注等很多方面。由于国内外很多专著都对这些句法分析算法进行了详细阐述，诸如文献［Tomita，1985；1991］、［Allen，1995］、［冯志伟，1996］、［赵铁军等，2001］、［刘颖，2002］等，因此，我们不再重复介绍这些算法，有兴趣的读者可以参阅相关专著或论文。<br>根据句法分析树形成方向的区别，人们通常将这些分析方法划分为三种类型：自顶向下（top-down）的分析方法、自底向上（bottom-up）的分析方法和两者相结合的分析方法。自顶向下分析算法实现的是规则推导的过程，分析树从根结点开始不断生长，最后形成分析句子的叶结点。而自底向上分析算法的实现过程恰好相反，它是从句子符号串开始，执行不断归约的过程，最后形成根结点。有些方法本身是确定的，例如，CYK算法、Earley算法、移进-规约算法和GLR算法等，都属于自底向上的分析算法，而有些方法既可以采用自底向上的方法实现，也可以采用自顶向下的方法实现，如线图分析算法。当然，线图分析算法还可以实现自底向上和自顶向下相结合的分析方法［刘颖，2002］。吴安迪（1993）认为，左角分析算法是一种较好的top-down方法和bottom-up方法相结合的算法，由于这种算法既可以避免纯粹的自顶向下分析算法穷尽式扩展非终结符结点、难以充分利用输入句子中词汇提供的信息指导推导过程的弱点，也可以避免纯粹的自底向上算法盲目归约当前结点寻找父结点、有时导致“误入歧途”的不足，因而，这种方法在道理上最接近人实现句法分析的过程，最具有心理语言学价值。</p>
+<p>基于规则的句法结构分析方法的主要优点是，分析算法可以利用手工编写的语法规则分析出输入句子所有可能的句法结构；对于特定的领域和目的，利用手工编写的有针对性的规则能够较好地处理输入句子中的部分歧义和一些超语法（extra-grammatical）现象。</p>
+<p>但是，规则分析方法也存在一些缺陷：①对于一个中等长度的输入句子来说，要利用大覆盖度的语法规则分析出所有可能的句子结构是非常困难的，分析过程的复杂性往往使程序无法实现；②即使能够分析出句子所有可能的结构，也难以在巨大的句法分析结果集合中实现有效的消歧，并选择出最有可能的分析结果；③手工编写的规则一般带有一定的主观性，对于实际应用系统来说，往往难以覆盖大领域的所有复杂语言；④手工编写规则本身是一件大工作量的复杂劳动，而且编写的规则对特定的领域有密切的相关性，不利于句法分析系统向其他领域移植［Carroll，2000］。</p>
+<p>Samuelsson and Wiren （2000）认为，基于规则的句法分析算法之所以能够成功地运用于计算机程序设计语言的编译器中，而面对自然语言的句法解析任务始终难以摆脱困境，其主要原因在于：一方面是形式化文法的生成能力问题。程序设计语言中使用的只是严格限制的上下文无关文法（CFG）的子类（subclass），而自然语言处理中所使用文法的表达能力更强，这种强大的表达能力在下面例句中十分明显地体现出来：</p>
+<p>（1）Who did you give the book to _ ?</p>
+<p>（2）Who do you think that you gave the book to _?</p>
+<p>（3）Who do you think that he suspects that you gave the book to _?</p>
+<p>在这三个例句中，疑问代词“who”可以作为“give”的间接宾语替换“_”位置。实际上，在句子（1）的两端之间可以嵌入任意多个描述成分，就像例句（2）和例句（3）一样，这种宾语与动词“give”的依存关系并没有距离的限制。尽管这种语言现象可以通过受限的形式化方法来描述［Gazdar et al.，1985］，但实际上，许多自然语言处理系统中所使用的形式化描述方法远远超过了上下文无关文法的表达能力。这样，形式化文法过于强大的表达能力使句法分析算法面临更多复杂的可能派生的句法结构。</p>
+<p>另一方面，在自然语言句子中存在更多、更复杂的结构歧义。在分析句子的每一步，句法分析器都可能有几种可能的候选规则和可执行的分析操作。如果歧义只存在于局部，句法分析器还可以通过简单的上下文分析对歧义进行消解，如下面的两个例句：</p>
+<p>（1）Who has seen John?</p>
+<p>（2）Who has John seen?</p>
+<p>如果我们假定句法分析器按照从左到右的分析顺序执行，当句法分析算法遇到第三个词“seen”或“John”时，“Who”作直接宾语还是作主语的歧义自然就消失了。但是，如果歧义是全局的，那么歧义消解就不是一件简单的事情了。正如我们在绪论中指出的，随着英语句子中介词短语组合个数的增加，介词引起的歧义结构的复杂程度不断加深，这个组合个数即为开塔兰数（Catalan numbers）。</p>
+<p>另外，自然语言的句法解析方法与程序设计语言的句法分析方法的区别还在于，自然语言处理中的句法分析器的先验知识的覆盖程度永远是有限的，句法分析器总是可能遇到未曾学习过的新的语言现象，而这一点对于程序设计语言来说是不可能的。人们在使用程序设计语言的时候，一切表达方式都必须服从机器的要求，是一个人服从机器的过程，这个过程是从语言的无限集到有限集的映射过程。而在自然语言处理中则恰恰相反，自然语言处理实现的是机器追踪和服从人的语言、从语言的有限集到无限集推演的过程。<br>M.Tomita（1991）认为，句法分析算法之所以在实际应用中常常会遇到难以克服的障碍，其实际性能离真正实用化要求还有相当的距离，其主要原因在于在语言学理论和实际的自然语言应用之间存在着巨大的差距，我们所缺少的正是弥补这个差距的桥梁，而这些桥梁就是有效的解析算法、语言知识工程、语言学理论或形式化方法的实现方法以及随机的（概率的）处理方法。</p>
+<p>鉴于基于规则的句法分析方法存在诸多局限性，20世纪80年代中期研究者们开始探索统计句法分析方法。目前研究较多的统计句法分析方法是语法驱动的（grammar-driven），其基本思想是由生成语法（generative grammar）定义被分析的语言及其分析出的类别，在训练数据中观察到的各种语言现象的分布以统计数据的方式与语法规则一起编码。在句法分析的过程中，当遇到歧义情况时，统计数据用于对多种分析结果的排序或选择。</p>
+<p>基于概率上下文无关文法（probabilistic （或stochastic）context-free grammar, PCFG或SCFG）的短语结构分析方法可以说是目前最成功的语法驱动的统计句法分析方法。该方法采用的模型主要包括词汇化的概率模型（lexicalized probabilistic model）和非词汇化的概率模型（unlexicalized probabilistic model）两种。表8-1列出了目前具有代表性的5个开源的短语结构分析器。<br><img src="/images/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%BB%9F%E8%AE%A1%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86/%E8%A1%A88-1%E5%B8%B8%E7%94%A8%E7%9F%AD%E8%AF%AD%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90%E5%99%A8.png" alt="表8-1常用短语结构分析器"><br>各句法分析器发布的网站地址为：</p>
+<p>（1）Collins Parser：<a href="http://people.csail.mit.edu/mcollins/code.html" target="_blank" rel="noopener">http://people.csail.mit.edu/mcollins/code.html</a></p>
+<p>（2）Bikel Parser：<a href="http://www.cis.upenn.edu/~dbikel/software.html#stat-parser" target="_blank" rel="noopener">http://www.cis.upenn.edu/~dbikel/software.html#stat-parser</a></p>
+<p>（3）Charniak Parser：<a href="http://www.cs.brown.edu/people/ec/#software" target="_blank" rel="noopener">http://www.cs.brown.edu/people/ec/#software</a></p>
+<p>（4）Berkeley Parser：<a href="http://nlp.cs.berkeley.edu/Main.html#Parsing" target="_blank" rel="noopener">http://nlp.cs.berkeley.edu/Main.html#Parsing</a></p>
+<p>（5）Stanford Parser：<a href="http://nlp.stanford.edu/downloads/lex-parser.shtml" target="_blank" rel="noopener">http://nlp.stanford.edu/downloads/lex-parser.shtml</a></p>
+<p>其中，Stanford Parser具备将短语结构树转换为依存关系树的功能。</p>
+<p>在下面的几节里将对基本的基于PCFG的句法分析方法和Collins Parser、Berkeley Parser两个典型的句法分析器做详细介绍</p>
+<h1 id="基于PCFG的基本分析方法"><a href="#基于PCFG的基本分析方法" class="headerlink" title="基于PCFG的基本分析方法"></a>基于PCFG的基本分析方法</h1><h2 id="PCFG"><a href="#PCFG" class="headerlink" title="PCFG"></a>PCFG</h2><p>基于概率上下文无关文法的句法分析方法自20世纪80年代提出以来，受到了众多学者的关注。由于这种方法既有规则方法的特点，又运用了概率信息，因此，可以认为是规则方法与统计方法的紧密结合。尤其在最近几年，随着统计方法研究的不断升温和统计方法必须与规则方法相结合的观点得到普遍认同，基于PCFG的句法分析方法研究备受关注。<br>PCFG是CFG的扩展，PCFG的规则表示形式为：A→α　p，其中A为非终结符，p为A推导出α的概率，即p＝P（A→α），该概率分布必须满足如下条件：<br>$$<br>\sum_{\alpha}p(A \to \alpha) =1<br>$$<br>也就是说，相同左部的产生式概率分布满足归一化条件。<br><img src="/images/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%BB%9F%E8%AE%A1%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86/PCFG%E4%BE%8B%E5%AD%90%E8%AF%AD%E6%B3%95.png" alt="PCFG例子语法"><br><img src="/images/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%BB%9F%E8%AE%A1%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86/PCFG%E4%BE%8B%E5%AD%90%E8%AF%AD%E6%B3%95%E6%A0%91.png" alt="PCFG例子语法树"><br>在基于PCFG的句法分析模型中，假设满足以下三个条件：</p>
+<p>①位置不变性（place invariance）：子树的概率不依赖于该子树所管辖的单词在句子中的位置；</p>
+<p>②上下文无关性（context-free）：子树的概率不依赖于子树控制范围以外的单词；</p>
+<p>③祖先无关性（ancestor-free）：子树的概率不依赖于推导出子树的祖先结点。<br>于是，图8-2中两棵子树的概率分别为<br>$$<br>\begin{aligned} P\left(t_{1}\right) &amp;=1.0 \times 0.2 \times 0.65 \times 1.0 \times 0.4 \times 0.06 \times 1.0 \times 1.0 \times 0.16 \\ &amp;=0.0004992 \\ P\left(t_{2}\right) &amp;=1.0 \times 0.2 \times 0.35 \times 0.65 \times 1.0 \times 0.06 \times 1.0 \times 1.0 \times 0.16 \\ &amp;=0.0004368 \end{aligned}<br>$$<br>与HMM类似，PCFG也有三个基本问题：</p>
+<p>①给定一个句子W＝w1w2…wn和文法G，如何快速计算概率P（W|G）？</p>
+<p>②给定一个句子W＝w1w2…wn和文法G，如何选择该句子的最佳结构？即选择句法结构树t使其具有最大概率：$\arg\max_t P（t|W,G）$；</p>
+<p>③给定PCFG G和句子W＝w1w2…wn，如何调节G的概率参数，使句子的概率最大？即求解$\arg\max_{GP}(W|G)$</p>
+<p>为了便于描述解决这三个问题的算法，我们在这里只考虑文法具有乔姆斯基范式（Chomsky normal form，CNF）的情况，即文法规则只有以下两种形式：</p>
+<p>① A→α；　α为终结符号；</p>
+<p>② A→BC；　B、C为非终结符号。</p>
+<p>任意给定一个CFG，都可以将其转换为CNF文法。假定文法符合CNF形式并不影响下面将要介绍的算法的适用性。这些算法只作适当的修改，便可用于其他形式的上下文无关文法。</p>
+<p>针对PCFG的三个基本问题，下面分别给出求解算法。<br>参考书籍第8章第2小结</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/nlp/" rel="tag"><i class="fa fa-tag"></i> nlp</a>
+          
+            <a href="/tags/统计自然语言处理/" rel="tag"><i class="fa fa-tag"></i> 统计自然语言处理</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/09/leetcode刷题记(1-100)/" rel="next" title="leetcode刷题记(1-100)">
+                <i class="fa fa-chevron-left"></i> leetcode刷题记(1-100)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/22/使用Pytorch深度学习进行NLP/" rel="prev" title="使用Pytorch深度学习进行NLP">
+                使用Pytorch深度学习进行NLP <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="Arvin_Zhang">
+            
+              <p class="site-author-name" itemprop="name">Arvin_Zhang</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/zhangweifeng919" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:zhangweifeng919@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#句法结构分析概述"><span class="nav-number">1.</span> <span class="nav-text">句法结构分析概述</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本概念"><span class="nav-number">1.1.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#语法形式化"><span class="nav-number">1.2.</span> <span class="nav-text">语法形式化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基本方法"><span class="nav-number">1.3.</span> <span class="nav-text">基本方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#基于PCFG的基本分析方法"><span class="nav-number">2.</span> <span class="nav-text">基于PCFG的基本分析方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#PCFG"><span class="nav-number">2.1.</span> <span class="nav-text">PCFG</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Arvin_Zhang</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count"></span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+    console.log("已经推送");
+})();
+</script>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'kjMy4Wir9L7O2wDtjHexeyl8-gzGzoHsz',
+        appKey: 'zruMkYmFF2lxyMAreQ8AdUWr',
+        placeholder: '欢迎提问，一起讨论\(^o^)/~',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("kjMy4Wir9L7O2wDtjHexeyl8-gzGzoHsz", "zruMkYmFF2lxyMAreQ8AdUWr");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+  
+  
+  <link rel="stylesheet" media="all" href="/lib/Han/dist/han.min.css?v=3.3">
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="nlp,统计自然语言处理,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="任何一个信息处理系统都离不开数据和知识库的支持，自然语言处理系统也不例外。语料库和语言知识库作为基本的资源，尽管在不同方法的自然语言处理系统中所起的作用不同，但是，它们在不同层面共同构成了各种自然语言处理方法赖以实现的基础，有时甚至是建立或改进一个自然语言处理系统的“瓶颈”。">
+<meta name="keywords" content="nlp,统计自然语言处理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="统计自然语言处理-语料库与语言知识库">
+<meta property="og:url" content="https://zhangweifeng.top/2019/04/11/统计自然语言处理-语料库与语言知识库/index.html">
+<meta property="og:site_name" content="漂泊在学海">
+<meta property="og:description" content="任何一个信息处理系统都离不开数据和知识库的支持，自然语言处理系统也不例外。语料库和语言知识库作为基本的资源，尽管在不同方法的自然语言处理系统中所起的作用不同，但是，它们在不同层面共同构成了各种自然语言处理方法赖以实现的基础，有时甚至是建立或改进一个自然语言处理系统的“瓶颈”。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-08-20T15:51:00.159Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="统计自然语言处理-语料库与语言知识库">
+<meta name="twitter:description" content="任何一个信息处理系统都离不开数据和知识库的支持，自然语言处理系统也不例外。语料库和语言知识库作为基本的资源，尽管在不同方法的自然语言处理系统中所起的作用不同，但是，它们在不同层面共同构成了各种自然语言处理方法赖以实现的基础，有时甚至是建立或改进一个自然语言处理系统的“瓶颈”。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zhangweifeng.top/2019/04/11/统计自然语言处理-语料库与语言知识库/">
+
+
+
+
+
+  <title>统计自然语言处理-语料库与语言知识库 | 漂泊在学海</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">漂泊在学海</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">学海无涯，回头是岸</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zhangweifeng.top/2019/04/11/统计自然语言处理-语料库与语言知识库/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Arvin_Zhang">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="漂泊在学海">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">统计自然语言处理-语料库与语言知识库</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-11T13:16:32+08:00">
+                2019-04-11
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2019-08-20T23:51:00+08:00">
+                2019-08-20
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/读书笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">读书笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/04/11/统计自然语言处理-语料库与语言知识库/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/04/11/统计自然语言处理-语料库与语言知识库/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2019/04/11/统计自然语言处理-语料库与语言知识库/" class="leancloud_visitors" data-flag-title="统计自然语言处理-语料库与语言知识库">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+           
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  
+                </span>
+              
+
+              
+
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  任何一个信息处理系统都离不开数据和知识库的支持，自然语言处理系统也不例外。语料库和语言知识库作为基本的资源，尽管在不同方法的自然语言处理系统中所起的作用不同，但是，它们在不同层面共同构成了各种自然语言处理方法赖以实现的基础，有时甚至是建立或改进一个自然语言处理系统的“瓶颈”。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body han-init-context" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="语料库技术"><a href="#语料库技术" class="headerlink" title="语料库技术"></a>语料库技术</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>语料库（corpus base）就是存放语言材料的数据库。那么，顾名思义，语料库语言学（corpus linguistics）就是基于语料库进行语言学研究的一门学问。具体一点讲，语料库语言学是研究自然语言机读文本（或称“电子文本”）的采集、存储、标注、检索、统计等方法的一门学问，其目的是通过对客观存在的大规模真实文本中的语言事实进行定量分析，为语言学研究或自然语言处理系统开发提供支持。</p>
+<h2 id="语料库的发展"><a href="#语料库的发展" class="headerlink" title="语料库的发展"></a>语料库的发展</h2><ol>
+<li>20世纪50年代中期以前：早期的语料库语言学<br>早期的语料库语言学指的是20世纪50年代中期以前，即乔姆斯基提出的转换生成语法理论之前所有基于语言材料的语言研究。这些研究主要集中在如下几个方面：<ol>
+<li>语言习得</li>
+<li>音系研究</li>
+<li>方言学与语料库技术的结合</li>
+</ol>
+</li>
+<li>1957年至20世纪80年代初期：沉寂时期<br>1957年乔姆斯基的《句法理论》及其以后一系列著作的发表，从根本上改变了语料库语言学的发展状况。乔姆斯基及其转换生成语法学派否定早期的语料库研究方法的主要依据有如下两点：<ol>
+<li>语料研究的方向有误</li>
+<li>语料的不充分性<br>转换生成语法学派的上述批评从根本上改变了20世纪50年代结构主义语言学的研究方向，在随后的近20年里，整个语言学界几乎唯直觉是从，基于语料的研究方法由此进入沉寂时期。当然，基于语料的语言学研究并未完全终止，除了R.Quirk和N.Francis等语言学家凭着非凡的学术勇气，顶着压力继续开展其研究项目并不断取得进展之外，另有十多项小型研究也在开展。</li>
+</ol>
+</li>
+<li>20世纪80年代至今：复苏与发展时期<br>在沉寂了近20年之后，语料库语言学自20世纪80年代开始复苏，并得到迅猛发展，从此进入一个空前繁荣阶段。这主要表现在如下两个方面：<ol>
+<li>第二代语料库相继建成。</li>
+<li>基于语料的研究项目大量增加。</li>
+</ol>
+</li>
+</ol>
+<h2 id="语料库的类型"><a href="#语料库的类型" class="headerlink" title="语料库的类型"></a>语料库的类型</h2><p>根据不同的划分标准，语料库可以分为多种类型。例如，按语种划分可以分为单语种语料库和多语种语料库；按记载媒体不同可以分为单媒体语料库和多媒体语料库；按照地域区别可以分为国家语料库和国际语料库等。这里主要介绍以语料代表性和平衡性为主要区分依据的“平衡语料库与平行语料库”、以语料库用途为主要区分依据的“通用语料库与专用语料库”、以语料分布时间为主要区分依据的“共时语料库与历时语料库”和以语料库内容加工程度划分的“生语料与标注语料库”。</p>
+<ol>
+<li>平衡语料库着重考虑的是语料的代表性与平衡性。<br>所谓的平行语料一般有两种含义，一种是指在同一种语言的语料上的平行，例如，“国际英语语料库”，共有20个平行的子语料库，分别来自以英语为母语或官方语言以及主要语言的国家，如英国、美国、加拿大、澳大利亚、新西兰等。其平行性表现为语料选取的时间、对象、比例、文本数、文本长度等几乎是一致的。建库的目的是对不同国家的英语进行对比研究。<br>对平行语料库的另一种理解是指两种或多种语言之间的平行采样和加工。例如，机器翻译中的双语对齐语料库（句子对齐或段落对齐）。</li>
+<li>通用语料库与专用语料库<br>所谓的通用语料库实际上与平衡语料库是从不同角度看问题的结果，或者说是与专用领域对举的结果。为了某种专门的目的，只采集某一特定领域、特定地区、特定时间、特定类型的语料构成的语料库就是专用语料库。例如，新闻语料库、科技语料库、中小学语料库、北京口语语料库等。</li>
+<li>共时语料库与历时语料库<br>所谓共时语料库是为了对语言进行共时研究而建立的语料库。按照索绪尔的观点，共时研究是指研究大树的横断面所见的细胞和细胞关系，即研究一个共时平面中的元素与元素的关系。无论所采集语料的时间段有多长，只要研究的是一个平面上的元素或元素的关系，就是共时研究，所建立的语料库就是共时语料库。<br>所谓的历时语料库是为了对语言进行历时研究而建立的语料库。按照索绪尔的观点，历时研究是研究大树的纵剖面所见的每个细胞和细胞关系的演变，即研究一个历时切面中元素与元素关系的演化。根据历时语料库得到的统计结果就不像共时语料库的统计结果是一个频次点，而是依据时间轴的等距离抽样得到的若干频次变化形成的演变曲线，我们把这种曲线称为变化“走势图”。</li>
+<li>生语料与标注语料库<br>所谓生语料是指没有经过任何加工处理的原始语料数据（corpora with raw data）。<br>标注语料库是指经过加工处理、标注了特定信息的语料库。根据加工程度不同，标注语料库又可以细分为分词语料库（主要指汉语）、分词与词性标注语料库、树库（tree bank）、命题库（proposition bank）、篇章树库（discourse tree bank）等。</li>
+</ol>
+<h2 id="汉语语料库建设中的问题"><a href="#汉语语料库建设中的问题" class="headerlink" title="汉语语料库建设中的问题"></a>汉语语料库建设中的问题</h2><p>由于汉语本身的特点和汉语研究历史的原因，汉语语料库的建设与其他语言语料库建设相比，存在一些特殊的问题，这些问题在很多方面影响着汉语语料库技术的发展。值得庆幸的是，很多专家都已经认识到这些问题，并为解决这些问题积极呼吁和不懈努力。其中，如下两个问题在汉语语料库建设中表现尤为突出。</p>
+<ol>
+<li>语料库建设的规范问题</li>
+<li>产权保护和国家语料库建设问题</li>
+</ol>
+<h2 id="典型语料库介绍"><a href="#典型语料库介绍" class="headerlink" title="典型语料库介绍"></a>典型语料库介绍</h2><ol>
+<li>LDC中文树库<br>LDC中文树库（Chinese Tree Bank, CTB） 〔8〕是由美国宾夕法尼亚大学（UPenn）负责开发，并通过语言数据联盟（LDC）发布的中文句法树库，该树库收集的语料取材于新华社和香港新闻等媒体，目前该语料库已经发展成为第7版，由2400个文本文件构成。含45000个句子，110万个词，165万个汉字。文件由GBK和UTF-8两种编码格式存储。</li>
+<li>命题库、名词化树库和语篇库<br>命题库（PropBank）、名词化树库（NomBank） 〔9〕和语篇树库（Penn Discourse Tree Bank, PDTB） 〔10〕是宾夕法尼亚树库（Penn Tree Bank）的扩展。</li>
+<li>布拉格依存树库<br>布拉格依存树库（Prague Dependency Treebank, PDT） 〔14〕是由捷克布拉格查尔斯大学（Charles University in Prague）数学物理学院形式与应用语言学研究所（Institute of Formal and Applied Linguistics, Faculty of Mathematics and Physics） 〔15〕组织开发的语料库，目前已经建成三个语料库：捷克语依存树库、捷克语-英语依存树库和阿拉伯语依存树库。</li>
+<li>BTEC口语语料<br>国际语音翻译先进研究联盟（Consortium for Speech Translation Advanced Research, C-STAR 〔16〕）成立于1991年，其目标是开展语音翻译的国际合作研究，开发实用的语音翻译技术。<br>为了推动语音翻译技术（尤其是基于语料库的翻译技术）的发展，C-STAR核心成员于2002年12月在意大利北部古城特兰托（Trento）召开研讨会，正式签署了大规模口语语料联合翻译和资源共享协议。</li>
+<li>现代汉语口语语料库<br>自2009年以来，中国科学院自动化研究所与中国社会科学院语言研究所在已有工作的基础上进一步合作，联合开展了大规模汉语口语语料的收集和标注工作，建成了名为“CASIA-CASSIL”的汉语口语标注语料库［周可艳，2010；Zhou et al., 2010］。<br>CASIA-CASSIL语料是从15000多个现场录音中选取的约1000段对话，平均时长约为90秒，对话长度不少于10个话轮。</li>
+<li>台湾中研院语料库<br>台湾中研院（Academia Sinica）曾于20世纪90年代初期开始建立了汉语平衡语料库（Sinica Corpus） 〔19〕和汉语树库（Sinica Treebank）</li>
+</ol>
+<h1 id="语言知识库"><a href="#语言知识库" class="headerlink" title="语言知识库"></a>语言知识库</h1><p>语言知识库在自然处理和语言学研究中具有重要的用途，无论是词汇知识库、句法规则库，还是语法信息库、语义概念库等各类语言知识资源，都是自然语言处理系统赖以建立的重要基础，甚至是不可或缺的基础。长期以来，国内外众多自然语言处理专家和语言学家为建立语言知识库付出了巨大心血，取得了一批优秀成果。本节对几项具有代表性的研究成果做简要介绍。<br>需要说明的是，“语言知识库”比“语料库”包含更广泛的内容。概括起来讲，语言知识库可分为两种不同的类型：一类是词典、规则库、语义概念库等，其中的语言知识表示是显性的，可采用形式化结构描述；另一类语言知识存在于语料库之中，每个语言单位的出现，其范畴、意义、用法都是确定的。语料库的主体是文本，即语句的集合，每个语句都是线性的非结构化的文字序列，其中包含的知识都是隐性的。语料加工的目的就是要把隐性的知识显性化，以便于机器学习和引用。</p>
+<ol>
+<li>WordNet<br>WordNet是由美国普林斯顿大学（Princeton University）认知科学实验室（Cognitive Science Laboratory 〔22〕）George A.Miller领导的研究组开发的英语机读词汇知识库，是一种传统的词典信息与计算机技术以及心理语言学的研究成果有机结合的产物。从1985年开始，WordNet作为一个知识工程全面展开，经过近20年的发展，WordNet已经成为国际上非常有影响力的英语词汇知识资源库。</li>
+<li>FrameNet<br>FrameNet是基于框架语义学（frame semantics）并以语料库为基础建立的在线英语词汇资源库，其目的是通过样本句子的计算机辅助标注和标注结果的自动表格化显示，来验证每个词在每种语义下语义和句法结合的可能性（配价，valence）范围。</li>
+<li>EDR<br>DR电子词典（EDR Electronic Dictionary）是由日本电子词典研究院（Japan Electronic Dictionary Research Institute, Ltd.）开发的面向自然语言处理的词典。该词典由11个子词典（sub-dictionary）组成，包括概念词典、词典和双语词典等。</li>
+<li>北京大学综合型语言知识库<br>北京大学计算语言学研究所（ICL/PKU）俞士汶教授领导建立的综合型语言知识库（简称CLKB）涵盖了词、词组、句子、篇章各单位和词法、句法、语义各层面，从汉语向多语言辐射，从通用领域深入到专业领域。</li>
+<li>知网<br>知网（HowNet）是机器翻译专家董振东和董强经过十多年的艰苦努力创建的语言知识库，是一个以汉语和英语的词语所代表的概念为描述对象，以揭示概念与概念之间以及概念所具有的属性之间的关系为基本内容的常识知识库。<br>知网是一个具有丰富内容和严密逻辑的语言知识系统，它作为自然语言处理技术，尤其是中文信息处理技术研究和系统开发重要的基础资源，在实际应用中发挥着越来越重要的作用，它可以广泛地应用于词汇语义相似性计算、词汇语义消歧、名词实体识别和文本分类等许多方面。</li>
+<li>概念层次网络<br>概念层次网络（Hierarchical Network of Concepts, HNC）是中国科学院声学研究所黄曾阳建立的面向整个自然语言理解的理论框架。1997年第4期《中文信息学报》发表了黄曾阳的论文“HNC理论概要”［黄曾阳，1997］，从此奠定了HNC理论的基础。</li>
+</ol>
+<h1 id="语言知识库与本体论"><a href="#语言知识库与本体论" class="headerlink" title="语言知识库与本体论"></a>语言知识库与本体论</h1><p>总之，本体的核心概念是知识共享，通过减少概念和术语上的歧义，建立一个统一的框架或规范模型，使得来自不同背景、持不同观点和目的的人员之间的理解和交流，以及不同系统之间的互操作或数据传输成为可能，并保持语义上的一致。<br>本体可分为三个层次：上位本体（upper ontology）、领域本体（domain ontology）和面向应用的本体（application-oriented ontology）。上位本体是跨领域可复用的通用本体。领域本体有时也称为中位本体（mid-level ontology），用于描述某一个特定学科、专业或领域里最广泛使用的概念和关系，例如信息科技领域和医学等学科的概念及概念之间的关系。面向应用的本体则是为某个应用而定制的本体知识库，例如体育运动领域中关于足球比赛的知识。有些应用可能需要跨领域的知识信息，例如有关电子消费产品的知识就同时涉及信息科技和商业贸易两个领域。就面向应用的领域本体而言，上位本体和相关的领域本体可同时被称为上层本体。</p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p>《统计自然语言处理》（第二版）  宗成庆 著 清华大学出版社 <a href="/books/mobi/统计自然语言处理（第2版）.mobi">统计自然语言处理.mobi下载</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/nlp/" rel="tag"><i class="fa fa-tag"></i> nlp</a>
+          
+            <a href="/tags/统计自然语言处理/" rel="tag"><i class="fa fa-tag"></i> 统计自然语言处理</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/09/统计自然语言处理-形式语言与自动机/" rel="next" title="统计自然语言处理-形式语言与自动机">
+                <i class="fa fa-chevron-left"></i> 统计自然语言处理-形式语言与自动机
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/11/统计自然语言处理-语言模型/" rel="prev" title="统计自然语言处理-语言模型">
+                统计自然语言处理-语言模型 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="Arvin_Zhang">
+            
+              <p class="site-author-name" itemprop="name">Arvin_Zhang</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/zhangweifeng919" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:zhangweifeng919@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#语料库技术"><span class="nav-number">1.</span> <span class="nav-text">语料库技术</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#语料库的发展"><span class="nav-number">1.2.</span> <span class="nav-text">语料库的发展</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#语料库的类型"><span class="nav-number">1.3.</span> <span class="nav-text">语料库的类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#汉语语料库建设中的问题"><span class="nav-number">1.4.</span> <span class="nav-text">汉语语料库建设中的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#典型语料库介绍"><span class="nav-number">1.5.</span> <span class="nav-text">典型语料库介绍</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#语言知识库"><span class="nav-number">2.</span> <span class="nav-text">语言知识库</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#语言知识库与本体论"><span class="nav-number">3.</span> <span class="nav-text">语言知识库与本体论</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Arvin_Zhang</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count"></span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+    console.log("已经推送");
+})();
+</script>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'kjMy4Wir9L7O2wDtjHexeyl8-gzGzoHsz',
+        appKey: 'zruMkYmFF2lxyMAreQ8AdUWr',
+        placeholder: '欢迎提问，一起讨论\(^o^)/~',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("kjMy4Wir9L7O2wDtjHexeyl8-gzGzoHsz", "zruMkYmFF2lxyMAreQ8AdUWr");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

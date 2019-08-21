@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+  
+  
+  <link rel="stylesheet" media="all" href="/lib/Han/dist/han.min.css?v=3.3">
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="nlp,jieba,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="对于未登录词，jieba 采用了HMM模型进行解决">
+<meta name="keywords" content="nlp,jieba">
+<meta property="og:type" content="article">
+<meta property="og:title" content="结巴（jieba）分词-未登录词分词">
+<meta property="og:url" content="https://zhangweifeng.top/2019/05/08/结巴（jieba）分词-未登录词分词/index.html">
+<meta property="og:site_name" content="漂泊在学海">
+<meta property="og:description" content="对于未登录词，jieba 采用了HMM模型进行解决">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://zhangweifeng.top/images/%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/%E7%BB%93%E5%B7%B4/%E5%88%86%E8%AF%8D%E6%B5%8B%E8%AF%95WITH_HMM.png">
+<meta property="og:updated_time" content="2019-08-20T15:51:00.155Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="结巴（jieba）分词-未登录词分词">
+<meta name="twitter:description" content="对于未登录词，jieba 采用了HMM模型进行解决">
+<meta name="twitter:image" content="https://zhangweifeng.top/images/%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/%E7%BB%93%E5%B7%B4/%E5%88%86%E8%AF%8D%E6%B5%8B%E8%AF%95WITH_HMM.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zhangweifeng.top/2019/05/08/结巴（jieba）分词-未登录词分词/">
+
+
+
+
+
+  <title>结巴（jieba）分词-未登录词分词 | 漂泊在学海</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">漂泊在学海</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">学海无涯，回头是岸</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zhangweifeng.top/2019/05/08/结巴（jieba）分词-未登录词分词/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Arvin_Zhang">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="漂泊在学海">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">结巴（jieba）分词-未登录词分词</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-08T15:03:46+08:00">
+                2019-05-08
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2019-08-20T23:51:00+08:00">
+                2019-08-20
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/源码阅读笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">源码阅读笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/05/08/结巴（jieba）分词-未登录词分词/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/05/08/结巴（jieba）分词-未登录词分词/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2019/05/08/结巴（jieba）分词-未登录词分词/" class="leancloud_visitors" data-flag-title="结巴（jieba）分词-未登录词分词">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+           
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  
+                </span>
+              
+
+              
+
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  对于未登录词，jieba 采用了HMM模型进行解决
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body han-init-context" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="HMM-分词原理"><a href="#HMM-分词原理" class="headerlink" title="HMM 分词原理"></a>HMM 分词原理</h2><p>具体的详细介绍可以参考网上的资料，或者我之前写的读书笔记<a href="/2019/04/15/统计自然语言处理-概率图模型/">统计自然语言处理-概率图模型</a>，这里只说HMM在分词中主要解决三个问题。</p>
+<ol>
+<li>评估问题(概率计算问题)<br>即给定观测序列 O=O1,O2,O3…Ot和模型参数λ=(A,B,π)，怎样有效计算这一观测序列出现的概率.<br>(Forward-backward算法) </li>
+<li>解码问题(预测问题)<br>即给定观测序列 O=O1,O2,O3…Ot和模型参数λ=(A,B,π)，怎样寻找满足这种观察序列意义上最优的隐含状态序列S。<br>(viterbi算法,近似算法) </li>
+<li>学习问题<br>即HMM的模型参数λ=(A,B,π)未知，如何求出这3个参数以使观测序列O=O1,O2,O3…Ot的概率尽可能的大.<br>(即用极大似然估计的方法估计参数,Baum-Welch,EM算法)</li>
+</ol>
+<p>HMM 模型的五元组表示： </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123; </span><br><span class="line">states，<span class="comment">//状态空间 </span></span><br><span class="line">observations，<span class="comment">//观察空间 </span></span><br><span class="line">start_probability，<span class="comment">//状态的初始分布，即π </span></span><br><span class="line">transition_probability，<span class="comment">//状态的转移概率矩阵，即A </span></span><br><span class="line">emission_probability<span class="comment">//状态产生观察的概率，发射概率矩阵,即B </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="HMM对未登录词的识别"><a href="#HMM对未登录词的识别" class="headerlink" title="HMM对未登录词的识别"></a>HMM对未登录词的识别</h2><p>先看一个测试</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding:utf8</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string"> 测试jieba 文件</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="keyword">import</span> jieba</span><br><span class="line"><span class="keyword">from</span> jieba <span class="keyword">import</span> Tokenizer</span><br><span class="line">s=<span class="string">"到MI京研大厦"</span></span><br><span class="line">t=Tokenizer()</span><br><span class="line">t.initialize()</span><br><span class="line">dag=t.get_DAG(s)</span><br><span class="line">print(dag)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(s)):</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> dag[i]:</span><br><span class="line">            print(i,j,s[i:j+<span class="number">1</span>])</span><br><span class="line">myroute=&#123;&#125;</span><br><span class="line">t.calc(s,dag,myroute)</span><br><span class="line">print(myroute)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">cut_DAG_NO_HMM</span><span class="params">(sentence,DAG,route)</span>:</span></span><br><span class="line">    x = <span class="number">0</span></span><br><span class="line">    N = len(sentence)</span><br><span class="line">    buf = <span class="string">''</span></span><br><span class="line">    <span class="keyword">while</span> x &lt; N:</span><br><span class="line">        y = route[x][<span class="number">1</span>] + <span class="number">1</span></span><br><span class="line">        l_word = sentence[x:y] <span class="comment"># 以x为起点的最大概率切分词语</span></span><br><span class="line">        <span class="keyword">if</span> jieba.re_eng.match(l_word) <span class="keyword">and</span> len(l_word) == <span class="number">1</span>: <span class="comment"># 数字或者字母</span></span><br><span class="line">            buf += l_word</span><br><span class="line">            x = y</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">if</span> buf:</span><br><span class="line">                <span class="keyword">yield</span> buf</span><br><span class="line">                buf = <span class="string">''</span></span><br><span class="line">            <span class="keyword">yield</span> l_word</span><br><span class="line">            x = y</span><br><span class="line">    <span class="keyword">if</span> buf:</span><br><span class="line">        <span class="keyword">yield</span> buf</span><br><span class="line">        buf = <span class="string">''</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">cut_DAG</span><span class="params">(sentence,DAG,route,tokenizer)</span>:</span></span><br><span class="line">    x = <span class="number">0</span></span><br><span class="line">    buf = <span class="string">''</span></span><br><span class="line">    N = len(sentence)</span><br><span class="line">    <span class="keyword">while</span> x &lt; N:</span><br><span class="line">        y = route[x][<span class="number">1</span>] + <span class="number">1</span></span><br><span class="line">        l_word = sentence[x:y]</span><br><span class="line">        <span class="keyword">if</span> y - x == <span class="number">1</span>:</span><br><span class="line">            buf += l_word</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">if</span> buf:</span><br><span class="line">                <span class="keyword">if</span> len(buf) == <span class="number">1</span>:</span><br><span class="line">                    <span class="keyword">yield</span> buf</span><br><span class="line">                    buf = <span class="string">''</span></span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="keyword">if</span> <span class="keyword">not</span> tokenizer.FREQ.get(buf):</span><br><span class="line">                        recognized = jieba.finalseg.cut(buf)</span><br><span class="line">                        <span class="keyword">for</span> t <span class="keyword">in</span> recognized:</span><br><span class="line">                            <span class="keyword">yield</span> t</span><br><span class="line">                    <span class="keyword">else</span>:</span><br><span class="line">                        <span class="keyword">for</span> elem <span class="keyword">in</span> buf:</span><br><span class="line">                            <span class="keyword">yield</span> elem</span><br><span class="line">                    buf = <span class="string">''</span></span><br><span class="line">            <span class="keyword">yield</span> l_word</span><br><span class="line">        x = y</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> buf:</span><br><span class="line">        <span class="keyword">if</span> len(buf) == <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">yield</span> buf</span><br><span class="line">        <span class="keyword">elif</span> <span class="keyword">not</span> t.FREQ.get(buf):</span><br><span class="line">            recognized = jieba.finalseg.cut(buf)</span><br><span class="line">            <span class="keyword">for</span> t <span class="keyword">in</span> recognized:</span><br><span class="line">                <span class="keyword">yield</span> t</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">for</span> elem <span class="keyword">in</span> buf:</span><br><span class="line">                <span class="keyword">yield</span> elem</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">print(<span class="string">'/'</span>.join(cut_DAG_NO_HMM(sentence=s,DAG=dag,route=myroute)))</span><br><span class="line">print(<span class="string">'/'</span>.join(cut_DAG(sentence=s,DAG=dag,route=myroute,tokenizer=t)))</span><br></pre></td></tr></table></figure>
+
+<p>显示的结果<br><img src="/images/%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/%E7%BB%93%E5%B7%B4/%E5%88%86%E8%AF%8D%E6%B5%8B%E8%AF%95WITH_HMM.png" alt="分词测试WITH_HMM"><br>我们发现“京研”这个词被正确的识别出来了，这就是HMM的强大之处。这是HMM的三大问题之一，由观察序列，求隐含序列。<br>上一节中我们说明了HMM由五元组表示，那么这样的五元组参数在中文分词中的具体含义是：</p>
+<ol>
+<li><p>states &amp; observations 状态空间和观察空间<br> 汉字按照BEMS四个状态来标记，分别代表 Begin End Middle 和 Single， {B:begin, M:middle, E:end, S:single}。分别代表每个状态代表的是该字在词语中的位置，B代表该字是词语中的起始字，M代表是词语中的中间字，E代表是词语中的结束字，S则代表是单字成词。<br> 观察空间为就是所有汉字(我她…)，甚至包括标点符号所组成的集合。<br> 状态值也就是我们要求的值，在HMM模型中文分词中，我们的输入是一个句子(也就是观察值序列)，输出是这个句子中每个字的状态值，用这四个状态符号依次标记输入句子中的字，可方便的得到分词方案。 如：<br> 观察序列：我在北京<br> 状态序列：SSBE<br> 对于上面的状态序列，根据规则进行划分得到 S/S/BE/<br> 对应于观察序列：我/在/北京/<br> 分词任务就完成了。<br> 同时我们可以注意到：<br> B后面只可能接(M or E)，不可能接(B or E)。而M后面也只可能接(M or E)，不可能接(B, S)。</p>
+</li>
+<li><p>start_probability 状态初始分布<br> 这个很好理解，如下：</p>
+ <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">P=&#123; <span class="string">'B'</span>: <span class="number">-0.26268660809250016</span>,</span><br><span class="line">    <span class="string">'E'</span>: <span class="number">-3.14e+100</span>,</span><br><span class="line">    <span class="string">'M'</span>: <span class="number">-3.14e+100</span>,</span><br><span class="line">    <span class="string">'S'</span>: <span class="number">-1.4652633398537678</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 示例数值是对概率值取对数之后的结果(s让概率相乘变成对数相加)，其中-3.14e+100作为负无穷，也就是对应的概率值是0。它表示了一个句子的第一个字属于{B,E,M,S}这四种状态的概率，如上可以看出，E和M的概率都是0，这和实际相符合，开头的第一个字只可能是词语的首字(B)，或者是单字成词(S)，这部分内容对应 jieba/finalseg/prob_start.py文件，具体源码。</p>
+</li>
+<li><p>transition_probability（状态的转移概率矩阵）<br>转移概率是马尔科夫链很重要的一个知识点，马尔科夫链(一阶)最大的特点就是当前T=i时刻的状态state(i)，只和T=i时刻之前的n个状态有关，即:<br>{state(i-1), state(i-2), … state(i - n)}<br>HMM模型有三个基本假设：<br>a. 系统在时刻t的状态只与时刻t-1处的状态相关,(也称为无后效性）;<br>b. 状态转移概率与时间无关,(也称为齐次性或时齐性);<br>c. 假设任意时刻的观测只依赖于该时刻的马尔科夫链的状态，与其它观测及状态无关,(也称观测独立性假设)。<br>其中前两个假设为马尔科夫模型的假设。 模型的这几个假设能大大简化问题。<br>再看下transition_probability，其实就是一个嵌套的字典，数值是概率求对数后的值,示例: </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">P=&#123;<span class="string">'B'</span>: &#123;<span class="string">'E'</span>: <span class="number">-0.510825623765990</span>, <span class="string">'M'</span>: <span class="number">-0.916290731874155</span>&#125;, </span><br><span class="line"><span class="string">'E'</span>: &#123;<span class="string">'B'</span>: <span class="number">-0.5897149736854513</span>, <span class="string">'S'</span>: <span class="number">-0.8085250474669937</span>&#125;, </span><br><span class="line"><span class="string">'M'</span>: &#123;<span class="string">'E'</span>: <span class="number">-0.33344856811948514</span>, <span class="string">'M'</span>: <span class="number">-1.2603623820268226</span>&#125;, </span><br><span class="line"><span class="string">'S'</span>: &#123;<span class="string">'B'</span>: <span class="number">-0.7211965654669841</span>, <span class="string">'S'</span>: <span class="number">-0.6658631448798212</span>&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p>如P[‘B’][‘E’]代表的含义就是从状态B转移到状态E的概率，由P[‘B’][‘E’] = -0.510825623765990，表示状态B的下一个状态是E的概率对数是-0.510825623765990。<br>这部分内容对应 jieba/finalseg/prob_trans.py文件</p>
+<ol start="4">
+<li>emission_probability(状态产生观察的概率，发射概率)<br>根据HMM观测独立性假设发射概率，即观察值只取决于当前状态值，也就是:<br>P(observed[i], states[j]) = P(states[j]) * P(observed[i]|states[j]),其中P(observed[i]|states[j])这个值就是从emission_probability中获取。<br>emission_probability示例如下：<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">P=&#123;<span class="string">'B'</span>: &#123;<span class="string">'\u4e00'</span>: <span class="number">-3.6544978750449433</span>, </span><br><span class="line"><span class="string">'\u4e01'</span>: <span class="number">-8.125041941842026</span>, </span><br><span class="line"><span class="string">'\u4e03'</span>: <span class="number">-7.817392401429855</span>, </span><br><span class="line"><span class="string">'\u4e07'</span>: <span class="number">-6.3096425804013165</span>, </span><br><span class="line">..., </span><br><span class="line"><span class="string">'S'</span>:&#123;...&#125;, </span><br><span class="line"><span class="meta">... </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p>比如P[‘B’][‘\u4e00’]代表的含义就是’B’状态下观测的字为’\u4e00’(对应的汉字为’一’)的概率对数P[‘B’][‘\u4e00’] = -3.6544978750449433。 </p>
+<h2 id="维比特算法"><a href="#维比特算法" class="headerlink" title="维比特算法"></a>维比特算法</h2><p>到这里已经结合HMM模型把jieba的五元参数介绍完，这五元的关系是通过一个叫Viterbi的算法串接起来，observations序列值是Viterbi的输入，而states序列值是Viterbi的输出，输入和输出之间Viterbi算法还需要借助三个模型参数，分别是start_probability，transition_probability，emission_probability。对于未登录词（OOV）的问题，即已知观察序列S，初始状态概率prob_start，状态观察发射概率prob_emit，状态转换概率prob_trans。 求状态序列W，这是个解码问题，维特比算法可以解决。</p>
+<p>该算法可以参考网络资料或者我之前写的读书笔记<a href="/2019/04/15/统计自然语言处理-概率图模型/">统计自然语言处理-概率图模型</a></p>
+<h2 id="jieba-分词中的应用"><a href="#jieba-分词中的应用" class="headerlink" title="jieba 分词中的应用"></a>jieba 分词中的应用</h2><p>jieba中对于未登录词问题，通过<strong>cut_DAG 函数我们可以看出这个函数前半部分用 calc 函数计算出了初步的分词，而后半部分就是就是针对上面例子中未出现在语料库的词语进行分词了。<br>由于基于频度打分的分词会倾向于把不能识别的词组一个字一个字地切割开，所以对这些字的合并就是识别OOV的一个方向，</strong>cut_DAG定义了一个buf 变量收集了这些连续的单个字，最后把它们组合成字符串再交由 finalseg.cut 函数来进行下一步分词。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 利用 viterbi算法得到句子分词的生成器</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">__cut</span><span class="params">(sentence)</span>:</span></span><br><span class="line">    <span class="keyword">global</span> emit_P</span><br><span class="line">    <span class="comment"># viterbi算法得到sentence 的切分</span></span><br><span class="line">    prob, pos_list = viterbi(sentence, <span class="string">'BMES'</span>, start_P, trans_P, emit_P)</span><br><span class="line">    begin, nexti = <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">    <span class="comment"># print pos_list, sentence</span></span><br><span class="line">    <span class="keyword">for</span> i, char <span class="keyword">in</span> enumerate(sentence):</span><br><span class="line">        pos = pos_list[i]</span><br><span class="line">        <span class="keyword">if</span> pos == <span class="string">'B'</span>:</span><br><span class="line">            begin = i</span><br><span class="line">        <span class="keyword">elif</span> pos == <span class="string">'E'</span>:</span><br><span class="line">            <span class="keyword">yield</span> sentence[begin:i + <span class="number">1</span>]</span><br><span class="line">            nexti = i + <span class="number">1</span></span><br><span class="line">        <span class="keyword">elif</span> pos == <span class="string">'S'</span>:</span><br><span class="line">            <span class="keyword">yield</span> char</span><br><span class="line">            nexti = i + <span class="number">1</span></span><br><span class="line">    <span class="keyword">if</span> nexti &lt; len(sentence):</span><br><span class="line">        <span class="keyword">yield</span> sentence[nexti:]</span><br></pre></td></tr></table></figure>
+
+<p>对应的viterbi算法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#状态转移矩阵，比如B状态前只可能是E或S状态  </span></span><br><span class="line">PrevStatus = &#123;  </span><br><span class="line">    <span class="string">'B'</span>:(<span class="string">'E'</span>,<span class="string">'S'</span>),  </span><br><span class="line">    <span class="string">'M'</span>:(<span class="string">'M'</span>,<span class="string">'B'</span>),  </span><br><span class="line">    <span class="string">'S'</span>:(<span class="string">'S'</span>,<span class="string">'E'</span>),  </span><br><span class="line">    <span class="string">'E'</span>:(<span class="string">'B'</span>,<span class="string">'M'</span>)  </span><br><span class="line">&#125;  </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">viterbi</span><span class="params">(obs, states, start_p, trans_p, emit_p)</span>:</span></span><br><span class="line">    V = [&#123;&#125;]  <span class="comment"># 状态概率矩阵  </span></span><br><span class="line">    path = &#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> y <span class="keyword">in</span> states:  <span class="comment"># 初始化状态概率</span></span><br><span class="line">        V[<span class="number">0</span>][y] = start_p[y] + emit_p[y].get(obs[<span class="number">0</span>], MIN_FLOAT)</span><br><span class="line">        path[y] = [y] <span class="comment"># 记录路径</span></span><br><span class="line">    <span class="keyword">for</span> t <span class="keyword">in</span> xrange(<span class="number">1</span>, len(obs)):</span><br><span class="line">        V.append(&#123;&#125;)</span><br><span class="line">        newpath = &#123;&#125;</span><br><span class="line">        <span class="keyword">for</span> y <span class="keyword">in</span> states:</span><br><span class="line">            em_p = emit_p[y].get(obs[t], MIN_FLOAT)</span><br><span class="line">            <span class="comment"># t时刻状态为y的最大概率(从t-1时刻中选择到达时刻t且状态为y的状态y0)</span></span><br><span class="line">            (prob, state) = max([(V[t - <span class="number">1</span>][y0] + trans_p[y0].get(y, MIN_FLOAT) + em_p, y0) <span class="keyword">for</span> y0 <span class="keyword">in</span> PrevStatus[y]])</span><br><span class="line">            V[t][y] = prob</span><br><span class="line">            newpath[y] = path[state] + [y] <span class="comment"># 只保存概率最大的一种路径 </span></span><br><span class="line">        path = newpath </span><br><span class="line">    <span class="comment"># 求出最后一个字哪一种状态的对应概率最大，最后一个字只可能是两种情况：E(结尾)和S(独立词)  </span></span><br><span class="line">    (prob, state) = max((V[len(obs) - <span class="number">1</span>][y], y) <span class="keyword">for</span> y <span class="keyword">in</span> <span class="string">'ES'</span>)</span><br></pre></td></tr></table></figure>
+
+<p>其实到这里思路很明确了，给定训练好的模型(如HMM)参数(λ=(A,B,π)), 然后对模型进行载入，再运行一遍Viterbi算法，就可以找出每个字对应的状态（B, M, E, S），这样就可以根据状态也就可以对句子进行分词。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a href="https://blog.csdn.net/daniel_ustc/article/details/48248393" target="_blank" rel="noopener">jieba中文分词源码分析（四）</a> </p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/nlp/" rel="tag"><i class="fa fa-tag"></i> nlp</a>
+          
+            <a href="/tags/jieba/" rel="tag"><i class="fa fa-tag"></i> jieba</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/07/结巴（jieba）分词源码分析/" rel="next" title="结巴（jieba）分词源码分析">
+                <i class="fa fa-chevron-left"></i> 结巴（jieba）分词源码分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/05/09/leetcode刷题记(1-100)/" rel="prev" title="leetcode刷题记(1-100)">
+                leetcode刷题记(1-100) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="Arvin_Zhang">
+            
+              <p class="site-author-name" itemprop="name">Arvin_Zhang</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/zhangweifeng919" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:zhangweifeng919@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#HMM-分词原理"><span class="nav-number">1.</span> <span class="nav-text">HMM 分词原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HMM对未登录词的识别"><span class="nav-number">2.</span> <span class="nav-text">HMM对未登录词的识别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#维比特算法"><span class="nav-number">3.</span> <span class="nav-text">维比特算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jieba-分词中的应用"><span class="nav-number">4.</span> <span class="nav-text">jieba 分词中的应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">5.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Arvin_Zhang</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count"></span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+    console.log("已经推送");
+})();
+</script>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'kjMy4Wir9L7O2wDtjHexeyl8-gzGzoHsz',
+        appKey: 'zruMkYmFF2lxyMAreQ8AdUWr',
+        placeholder: '欢迎提问，一起讨论\(^o^)/~',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("kjMy4Wir9L7O2wDtjHexeyl8-gzGzoHsz", "zruMkYmFF2lxyMAreQ8AdUWr");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

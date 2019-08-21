@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+  
+  
+  <link rel="stylesheet" media="all" href="/lib/Han/dist/han.min.css?v=3.3">
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="NLP,word2vec,Pytorch,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="学习使用Pytorch实现word2vec,翻译于：https://towardsdatascience.com/implementing-word2vec-in-pytorch-skip-gram-model-e6bae040d2fb">
+<meta name="keywords" content="NLP,word2vec,Pytorch">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Pytorch实现word2vec(skip-gram)">
+<meta property="og:url" content="https://zhangweifeng.top/2019/08/03/使用Pytorch实现word2vec-skip-gram/index.html">
+<meta property="og:site_name" content="漂泊在学海">
+<meta property="og:description" content="学习使用Pytorch实现word2vec,翻译于：https://towardsdatascience.com/implementing-word2vec-in-pytorch-skip-gram-model-e6bae040d2fb">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://zhangweifeng.top/images/%E6%96%87%E7%AB%A0%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/%E4%BD%BF%E7%94%A8pytorch%E5%AE%9E%E7%8E%B0word2vec_skip_gram_%E5%9B%BE%E4%B8%80.png">
+<meta property="og:updated_time" content="2019-08-20T15:51:00.153Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用Pytorch实现word2vec(skip-gram)">
+<meta name="twitter:description" content="学习使用Pytorch实现word2vec,翻译于：https://towardsdatascience.com/implementing-word2vec-in-pytorch-skip-gram-model-e6bae040d2fb">
+<meta name="twitter:image" content="https://zhangweifeng.top/images/%E6%96%87%E7%AB%A0%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/%E4%BD%BF%E7%94%A8pytorch%E5%AE%9E%E7%8E%B0word2vec_skip_gram_%E5%9B%BE%E4%B8%80.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zhangweifeng.top/2019/08/03/使用Pytorch实现word2vec-skip-gram/">
+
+
+
+
+
+  <title>使用Pytorch实现word2vec(skip-gram) | 漂泊在学海</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">漂泊在学海</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">学海无涯，回头是岸</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zhangweifeng.top/2019/08/03/使用Pytorch实现word2vec-skip-gram/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Arvin_Zhang">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="漂泊在学海">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">使用Pytorch实现word2vec(skip-gram)</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-03T11:08:23+08:00">
+                2019-08-03
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2019-08-20T23:51:00+08:00">
+                2019-08-20
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/文档阅读笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">文档阅读笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/08/03/使用Pytorch实现word2vec-skip-gram/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/08/03/使用Pytorch实现word2vec-skip-gram/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2019/08/03/使用Pytorch实现word2vec-skip-gram/" class="leancloud_visitors" data-flag-title="使用Pytorch实现word2vec(skip-gram)">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+           
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  
+                </span>
+              
+
+              
+
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  学习使用Pytorch实现word2vec,翻译于：https://towardsdatascience.com/implementing-word2vec-in-pytorch-skip-gram-model-e6bae040d2fb
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body han-init-context" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="引入相关包"><a href="#引入相关包" class="headerlink" title="引入相关包"></a>引入相关包</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.autograd <span class="keyword">as</span> autograd</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"><span class="keyword">from</span> torch.autograd <span class="keyword">import</span> Variable</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br></pre></td></tr></table></figure>
+
+<h2 id="语料"><a href="#语料" class="headerlink" title="语料"></a>语料</h2><p>为了跟踪每一个步骤，使用了下面非常小的语料</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">corpus = [</span><br><span class="line">    <span class="string">'he is a king'</span>,</span><br><span class="line">    <span class="string">'she is a queen'</span>,</span><br><span class="line">    <span class="string">'he is a man'</span>,</span><br><span class="line">    <span class="string">'she is a woman'</span>,</span><br><span class="line">    <span class="string">'warsaw is poland capital'</span>,</span><br><span class="line">    <span class="string">'berlin is germany capital'</span>,</span><br><span class="line">    <span class="string">'paris is france capital'</span>,</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<h2 id="创建词汇表"><a href="#创建词汇表" class="headerlink" title="创建词汇表"></a>创建词汇表</h2><p>创建词汇表是word2vec的第一步，因为这个词汇表不支持扩展，所以在一开始就要创建。<br>这个语料库非常简短，在实际操作中可能需要标准化，去掉一些标点符号什么的，现在我们用的语料比较简单，现在我们把它令牌化。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">tokenize_corpus</span><span class="params">(corpus)</span>:</span></span><br><span class="line">    tokens = [x.split() <span class="keyword">for</span> x <span class="keyword">in</span> corpus]</span><br><span class="line">    <span class="keyword">return</span> tokens</span><br><span class="line"></span><br><span class="line">tokenized_corpus = tokenize_corpus(corpus)</span><br></pre></td></tr></table></figure>
+
+<p>他会输出这样一个列表</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[[<span class="string">'he'</span>, <span class="string">'is'</span>, <span class="string">'a'</span>, <span class="string">'king'</span>],</span><br><span class="line"> [<span class="string">'she'</span>, <span class="string">'is'</span>, <span class="string">'a'</span>, <span class="string">'queen'</span>],</span><br><span class="line"> [<span class="string">'he'</span>, <span class="string">'is'</span>, <span class="string">'a'</span>, <span class="string">'man'</span>],</span><br><span class="line"> [<span class="string">'she'</span>, <span class="string">'is'</span>, <span class="string">'a'</span>, <span class="string">'woman'</span>],</span><br><span class="line"> [<span class="string">'warsaw'</span>, <span class="string">'is'</span>, <span class="string">'poland'</span>, <span class="string">'capital'</span>],</span><br><span class="line"> [<span class="string">'berlin'</span>, <span class="string">'is'</span>, <span class="string">'germany'</span>, <span class="string">'capital'</span>],</span><br><span class="line"> [<span class="string">'paris'</span>, <span class="string">'is'</span>, <span class="string">'france'</span>, <span class="string">'capital'</span>]]</span><br></pre></td></tr></table></figure>
+
+<p>现在开始迭代它，生成一个不重复的单词列表，然后建立两个字典，来映射单词和索引。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">vocabulary = []</span><br><span class="line"><span class="keyword">for</span> sentence <span class="keyword">in</span> tokenized_corpus:</span><br><span class="line">    <span class="keyword">for</span> token <span class="keyword">in</span> sentence:</span><br><span class="line">        <span class="keyword">if</span> token <span class="keyword">not</span> <span class="keyword">in</span> vocabulary:</span><br><span class="line">            vocabulary.append(token)</span><br><span class="line"></span><br><span class="line">word2idx = &#123;w: idx <span class="keyword">for</span> (idx, w) <span class="keyword">in</span> enumerate(vocabulary)&#125;</span><br><span class="line">idx2word = &#123;idx: w <span class="keyword">for</span> (idx, w) <span class="keyword">in</span> enumerate(vocabulary)&#125;</span><br><span class="line"></span><br><span class="line">vocabulary_size = len(vocabulary)</span><br><span class="line">print(idx2word)</span><br></pre></td></tr></table></figure>
+
+<p>这个将输出</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span>: <span class="string">'he'</span>,</span><br><span class="line"> <span class="number">1</span>: <span class="string">'is'</span>,</span><br><span class="line"> <span class="number">2</span>: <span class="string">'a'</span>,</span><br><span class="line"> <span class="number">3</span>: <span class="string">'king'</span>,</span><br><span class="line"> <span class="number">4</span>: <span class="string">'she'</span>,</span><br><span class="line"> <span class="number">5</span>: <span class="string">'queen'</span>,</span><br><span class="line"> <span class="number">6</span>: <span class="string">'man'</span>,</span><br><span class="line"> <span class="number">7</span>: <span class="string">'woman'</span>,</span><br><span class="line"> <span class="number">8</span>: <span class="string">'warsaw'</span>,</span><br><span class="line"> <span class="number">9</span>: <span class="string">'poland'</span>,</span><br><span class="line"> <span class="number">10</span>: <span class="string">'capital'</span>,</span><br><span class="line"> <span class="number">11</span>: <span class="string">'berlin'</span>,</span><br><span class="line"> <span class="number">12</span>: <span class="string">'germany'</span>,</span><br><span class="line"> <span class="number">13</span>: <span class="string">'paris'</span>,</span><br><span class="line"> <span class="number">14</span>: <span class="string">'france'</span></span><br></pre></td></tr></table></figure>
+
+<p>现在我们可以生成中心词和上下文词的组合，假设上下文窗口是对称的并且大小为2.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">window_size = <span class="number">2</span></span><br><span class="line">idx_pairs = []</span><br><span class="line"><span class="comment"># for each sentence</span></span><br><span class="line"><span class="keyword">for</span> sentence <span class="keyword">in</span> tokenized_corpus:</span><br><span class="line">    indices = [word2idx[word] <span class="keyword">for</span> word <span class="keyword">in</span> sentence]</span><br><span class="line">    <span class="comment"># for each word, threated as center word</span></span><br><span class="line">    <span class="keyword">for</span> center_word_pos <span class="keyword">in</span> range(len(indices)):</span><br><span class="line">        <span class="comment"># for each window position</span></span><br><span class="line">        <span class="keyword">for</span> w <span class="keyword">in</span> range(-window_size, window_size + <span class="number">1</span>):</span><br><span class="line">            context_word_pos = center_word_pos + w</span><br><span class="line">            <span class="comment"># make soure not jump out sentence</span></span><br><span class="line">            <span class="keyword">if</span> context_word_pos &lt; <span class="number">0</span> <span class="keyword">or</span> context_word_pos &gt;= len(indices) <span class="keyword">or</span> center_word_pos == context_word_pos:</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            context_word_idx = indices[context_word_pos]</span><br><span class="line">            idx_pairs.append((indices[center_word_pos], context_word_idx))</span><br><span class="line"></span><br><span class="line">idx_pairs = np.array(idx_pairs) <span class="comment"># it will be useful to have this as numpy array</span></span><br></pre></td></tr></table></figure>
+
+<p>它会得到一个中心词和上下词的组合：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">array([[ <span class="number">0</span>,  <span class="number">1</span>],</span><br><span class="line">       [ <span class="number">0</span>,  <span class="number">2</span>],</span><br><span class="line">       ...</span><br></pre></td></tr></table></figure>
+
+<p>可以很简单转换成单词：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">he <span class="keyword">is</span></span><br><span class="line">he a</span><br><span class="line"><span class="keyword">is</span> he</span><br><span class="line"><span class="keyword">is</span> a</span><br><span class="line"><span class="keyword">is</span> king</span><br><span class="line">a he</span><br><span class="line">a <span class="keyword">is</span></span><br><span class="line">a king</span><br></pre></td></tr></table></figure>
+
+<p>具有完美的意义：<br><img src="/images/%E6%96%87%E7%AB%A0%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/%E4%BD%BF%E7%94%A8pytorch%E5%AE%9E%E7%8E%B0word2vec_skip_gram_%E5%9B%BE%E4%B8%80.png" alt="图"></p>
+<h2 id="定义目标"><a href="#定义目标" class="headerlink" title="定义目标"></a>定义目标</h2><p>现在我们详细介绍从第一个方程到最后实现的细节</p>
+<p>对于skip-gram 我们感兴趣的是给定中心词和一些参数来预测上下文词。这是我们的对于一个组合的概率分布<br>$$<br>P(context | center,\theta)<br>$$<br>现在我们想最大化所有的中心词和上下文词的组合：<br>$$<br>\max \prod_{center} \prod_{context} P(context | center,\theta)<br>$$<br>等等，为什么？<br>因为我们感兴趣的是给定中心词来预测上下文词，对于每个上下文词和中心词的组合，我们想最大化$P(context | center,\theta)$,所有的概率相加等于1——对于所有不存在的中心词，上下文词组合，我们默认他们为0。通过把这些概率相乘，如果我们的模型比较好，结果就会接近1，如果比较差，结果就会接近0，我们追求好的模型，所以，这是一个最大化的操作。<br>这个表达式不太适合计算，这就是为什么进行一些非常常规的变换。</p>
+<h3 id="使用负对数似然替换概率"><a href="#使用负对数似然替换概率" class="headerlink" title="使用负对数似然替换概率"></a>使用负对数似然替换概率</h3><p>回忆一下，在神经网络中，要最小化损失函数。我们可以简单的将P乘以-1，应用对数可以给我们更好的计算性质。对数不改变函数的极值，因为对数是严格的单调函数。所以表达式可以变为：<br>$$<br>\min_{\theta} - \log \prod_{center} \prod_{context} P(context | center,\theta)<br>$$</p>
+<h3 id="用加法替换乘法"><a href="#用加法替换乘法" class="headerlink" title="用加法替换乘法"></a>用加法替换乘法</h3><p>下一步就是用加号替换乘号，因为：<br>$$<br>\log (a * b)= \log a + \log b<br>$$</p>
+<h3 id="变换成合适的损失函数"><a href="#变换成合适的损失函数" class="headerlink" title="变换成合适的损失函数"></a>变换成合适的损失函数</h3><p>$$<br>loss = - \cfrac{1}{T} \sum_{center} \sum_{context} \log P(context | center,\theta)<br>$$</p>
+<h3 id="定义P"><a href="#定义P" class="headerlink" title="定义P"></a>定义P</h3><p>很好，但是我们怎么定义$P(context | center)$目前为止，假设我们接触到的单词有两个向量，第一个是中心词$(V)$,第二个是上下文文词$(U)$,P的定义看起来像下面那样：<br>$$<br>P(\text { context } | \text { center })=\frac{\exp \left(u_{\text { context }}^{T} v_{\text { center }}\right)}{\sum_{w \in \text { vocab }} \exp \left(u_{w}^{T} v_{\text { center }}\right)}<br>$$<br>真可怕！<br>让我们把它分解成小块，看下面的结构：<br>$$<br>\frac{\exp (\cdot)}{\sum \exp (\cdot)}<br>$$<br>这是softmax函数，再仔细看一下分子：<br>$$<br>u_{\text { context }}^{T} v_{\text { center }}<br>$$<br>U和V都是向量，这个表达式是中心词和上下文词的标量积。他们越相似，就越大。<br>现在看分母：<br>$$<br>\sum_{w \in \text { vocab }}<br>$$<br>我们遍历了词汇表的所有单词<br>$$<br>u_{w}^{T} v_{\text { center }}<br>$$<br>然后计算中心词与词表中的每个词作为上下文词的相似性。</p>
+<h3 id="总结一下"><a href="#总结一下" class="headerlink" title="总结一下"></a>总结一下</h3><p>对于每个中心词和上下文词组合，计算他们的”相似分数“，然后除以每个理论上可能的上下文——知道分数相对的高还是低。softmax 可以保证值的范围在0和1之间。定义了合格的概率分布。</p>
+<h2 id="很好，我们现在来编码"><a href="#很好，我们现在来编码" class="headerlink" title="很好，我们现在来编码"></a>很好，我们现在来编码</h2><p>神经网络实现这个概念，用了三层网络，输入层，隐含层，输出层。</p>
+<h3 id="输入层"><a href="#输入层" class="headerlink" title="输入层"></a>输入层</h3><p>输入层是one-hot编码的中心词，它的维度是[1,vocabulary_size]</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_input_layer</span><span class="params">(word_idx)</span>:</span></span><br><span class="line">    x = torch.zeros(vocabulary_size).float()</span><br><span class="line">    x[word_idx] = <span class="number">1.0</span></span><br><span class="line">    <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+
+<h3 id="隐含层"><a href="#隐含层" class="headerlink" title="隐含层"></a>隐含层</h3><p>隐含层作为我们的V向量，所以它有embedding_dim个神经元，为了计算它，我们需要W1权重矩阵。当然，它需要有[embedding_size,vocabulary_size]的形状。这里没有激活函数，只需要简单的矩阵相乘。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">embedding_dims = <span class="number">5</span></span><br><span class="line">W1 = Variable(torch.randn(embedding_dims, vocabulary_size).float(), requires_grad=<span class="literal">True</span>)</span><br><span class="line">z1 = torch.matmul(W1, x)</span><br></pre></td></tr></table></figure>
+
+<p>重要的是——W1的每列保存着每个单词的v向量。为什么？因为x是one-hot向量，如果矩阵乘以one-hot变量，相当于从矩阵中选择一列，你可以使用一张纸验算一下。</p>
+<h3 id="输出层"><a href="#输出层" class="headerlink" title="输出层"></a>输出层</h3><p>最后一层要有vacalbuary_size个神经元，因为它为每个单词生成概率，因此W2是[vocalbuary_size,embedding_size]形状。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">W2 = Variable(torch.randn(vocabulary_size, embedding_dims).float(), requires_grad=<span class="literal">True</span>)</span><br><span class="line">z2 = torch.matmul(W2, z1)</span><br></pre></td></tr></table></figure>
+
+<p>在上面我们使用softmax层，Pytorch 提供了相应的版本。和log 结合在一起，因为常规的softmax 不是数值稳定的。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">log_softmax = F.log_softmax(a2, dim=<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+
+<p>这个算式，是在做softmax之后，再应用对数。<br>现在我们可以计算loss,Pytorch 也提供了函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">loss = F.nll_loss(log_softmax.view(<span class="number">1</span>,<span class="number">-1</span>), y_true)</span><br></pre></td></tr></table></figure>
+
+<p>这个nll_loss在log softmax上计算nagtive-log-likelihood ,y_true是上下文词，我们想让这个越高越好，因为x,y_true组合是真实的中心词和上下文词。</p>
+<h3 id="反向传播"><a href="#反向传播" class="headerlink" title="反向传播"></a>反向传播</h3><p>我们完成了正向传递，下面进行反向传播</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">loss.backward()</span><br></pre></td></tr></table></figure>
+
+<p>使用SDG进行优化，这个很简单，直接手写比创建优化器对象更加简单</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">W1.data -= <span class="number">0.01</span> * W1.grad.data</span><br><span class="line">W2.data -= <span class="number">0.01</span> * W2.grad.data</span><br></pre></td></tr></table></figure>
+
+<p>最后一步就是把梯度置为0，确保下次循环不受影响</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">W1.grad.data.zero_()</span><br><span class="line">W2.grad.data.zero_()</span><br></pre></td></tr></table></figure>
+
+<h3 id="训练循环"><a href="#训练循环" class="headerlink" title="训练循环"></a>训练循环</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">embedding_dims = <span class="number">5</span></span><br><span class="line">W1 = Variable(torch.randn(embedding_dims, vocabulary_size).float(), requires_grad=<span class="literal">True</span>)</span><br><span class="line">W2 = Variable(torch.randn(vocabulary_size, embedding_dims).float(), requires_grad=<span class="literal">True</span>)</span><br><span class="line">num_epochs = <span class="number">100</span></span><br><span class="line">learning_rate = <span class="number">0.001</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> epo <span class="keyword">in</span> range(num_epochs):</span><br><span class="line">    loss_val = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> data, target <span class="keyword">in</span> idx_pairs:</span><br><span class="line">        x = Variable(get_input_layer(data)).float()</span><br><span class="line">        y_true = Variable(torch.from_numpy(np.array([target])).long())</span><br><span class="line"></span><br><span class="line">        z1 = torch.matmul(W1, x)</span><br><span class="line">        z2 = torch.matmul(W2, z1)</span><br><span class="line">    </span><br><span class="line">        log_softmax = F.log_softmax(z2, dim=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">        loss = F.nll_loss(log_softmax.view(<span class="number">1</span>,<span class="number">-1</span>), y_true)</span><br><span class="line">        loss_val += loss.item()</span><br><span class="line">        loss.backward()</span><br><span class="line">        W1.data -= learning_rate * W1.grad.data</span><br><span class="line">        W2.data -= learning_rate * W2.grad.data</span><br><span class="line"></span><br><span class="line">        W1.grad.data.zero_()</span><br><span class="line">        W2.grad.data.zero_()</span><br><span class="line">    <span class="keyword">if</span> epo % <span class="number">10</span> == <span class="number">0</span>:    </span><br><span class="line">        print(<span class="string">f'Loss at epo <span class="subst">&#123;epo&#125;</span>: <span class="subst">&#123;loss_val/len(idx_pairs)&#125;</span>'</span>)</span><br></pre></td></tr></table></figure>
+
+<p>一个可能棘手的问题是y_true定义。我们没有明确创建one-hot,nll_loss 会自动帮我们完成。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Loss at epo <span class="number">0</span>: <span class="number">4.241989389487675</span></span><br><span class="line">Loss at epo <span class="number">10</span>: <span class="number">3.8398486052240646</span></span><br><span class="line">Loss at epo <span class="number">20</span>: <span class="number">3.5548086541039603</span></span><br><span class="line">Loss at epo <span class="number">30</span>: <span class="number">3.343840673991612</span></span><br><span class="line">Loss at epo <span class="number">40</span>: <span class="number">3.183084646293095</span></span><br><span class="line">Loss at epo <span class="number">50</span>: <span class="number">3.05673006943294</span></span><br><span class="line">Loss at epo <span class="number">60</span>: <span class="number">2.953996729850769</span></span><br><span class="line">Loss at epo <span class="number">70</span>: <span class="number">2.867735825266157</span></span><br><span class="line">Loss at epo <span class="number">80</span>: <span class="number">2.79331214427948</span></span><br><span class="line">Loss at epo <span class="number">90</span>: <span class="number">2.727727291413716</span></span><br><span class="line">Loss at epo <span class="number">100</span>: <span class="number">2.6690095041479385</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="提取向量"><a href="#提取向量" class="headerlink" title="提取向量"></a>提取向量</h2><p>现在我们训练了一个网络，最后一件事就是提取每个单词的向量，这里有三个可能的方式<br>    - 使用W1的v向量<br>    - 使用W2的u向量<br>    - 使用u和v的平均<br>你可以自己思考什么时候用哪个</p>
+<h2 id="全部代码"><a href="#全部代码" class="headerlink" title="全部代码"></a>全部代码</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> torch.autograd <span class="keyword">as</span> autograd</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"><span class="keyword">from</span> torch.autograd <span class="keyword">import</span> Variable</span><br><span class="line">corpus = [</span><br><span class="line">    <span class="string">'he is a king'</span>,</span><br><span class="line">    <span class="string">'she is a queen'</span>,</span><br><span class="line">    <span class="string">'he is a man'</span>,</span><br><span class="line">    <span class="string">'she is a woman'</span>,</span><br><span class="line">    <span class="string">'warsaw is poland capital'</span>,</span><br><span class="line">    <span class="string">'berlin is germany capital'</span>,</span><br><span class="line">    <span class="string">'paris is france capital'</span>,</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">tokenize_corpus</span><span class="params">(corpus)</span>:</span></span><br><span class="line">    tokens=[x.split() <span class="keyword">for</span> x <span class="keyword">in</span> corpus]</span><br><span class="line">    <span class="keyword">return</span> tokens</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">tokenized_corpus=tokenize_corpus(corpus)</span><br><span class="line">print(tokenized_corpus)</span><br><span class="line"></span><br><span class="line">vocabulary=[]</span><br><span class="line"><span class="keyword">for</span> sentence <span class="keyword">in</span> tokenized_corpus:</span><br><span class="line">    <span class="keyword">for</span> token <span class="keyword">in</span> sentence:</span><br><span class="line">        <span class="keyword">if</span> token <span class="keyword">not</span> <span class="keyword">in</span> vocabulary:</span><br><span class="line">            vocabulary.append(token)</span><br><span class="line">word2idx=&#123;w:idx <span class="keyword">for</span> (idx,w) <span class="keyword">in</span> enumerate(vocabulary)&#125;</span><br><span class="line">idx2word=&#123;idx:w <span class="keyword">for</span> (idx,w) <span class="keyword">in</span> enumerate(vocabulary)&#125;</span><br><span class="line"></span><br><span class="line">vocabulary_size=len(vocabulary)</span><br><span class="line"></span><br><span class="line">print(idx2word)</span><br><span class="line">window_size=<span class="number">2</span></span><br><span class="line">idx_pairs=[]</span><br><span class="line"><span class="keyword">for</span> sentence <span class="keyword">in</span> tokenized_corpus:</span><br><span class="line">    indices=[word2idx[word] <span class="keyword">for</span> word <span class="keyword">in</span> sentence]</span><br><span class="line">    <span class="keyword">for</span> center_word_pos <span class="keyword">in</span> range(len(indices)):</span><br><span class="line">        <span class="keyword">for</span> w <span class="keyword">in</span> range(-window_size,window_size+<span class="number">1</span>):</span><br><span class="line">            context_word_pos=center_word_pos+w</span><br><span class="line">            <span class="keyword">if</span> context_word_pos&lt;<span class="number">0</span> <span class="keyword">or</span> context_word_pos&gt;= len(indices) <span class="keyword">or</span> center_word_pos==context_word_pos:</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            context_word_idx=indices[context_word_pos]</span><br><span class="line">            idx_pairs.append([indices[center_word_pos],context_word_idx])</span><br><span class="line">idx_pairs=np.array(idx_pairs)</span><br><span class="line">print(idx_pairs)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_input_layer</span><span class="params">(word_idx)</span>:</span></span><br><span class="line">    x=torch.zeros(vocabulary_size).float()</span><br><span class="line">    x[word_idx]=<span class="number">1.0</span></span><br><span class="line">    <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line">embedding_size=<span class="number">5</span></span><br><span class="line">W1=Variable(torch.randn(embedding_size,vocabulary_size).float(),requires_grad=<span class="literal">True</span>)</span><br><span class="line">W2 = Variable(torch.randn(vocabulary_size, embedding_size).float(), requires_grad=<span class="literal">True</span>)</span><br><span class="line">num_epochs = <span class="number">100</span></span><br><span class="line">learning_rate = <span class="number">0.001</span></span><br><span class="line"><span class="keyword">for</span> epo <span class="keyword">in</span> range(num_epochs):</span><br><span class="line">    loss_val=<span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> data,target <span class="keyword">in</span> idx_pairs:</span><br><span class="line">        x= Variable(get_input_layer(data)).float()</span><br><span class="line">        y_true=Variable(torch.from_numpy(np.array([target])).long())</span><br><span class="line">        z1=torch.matmul(W1,x)</span><br><span class="line">        z2=torch.matmul(W2,z1)</span><br><span class="line">        log_softmax=F.log_softmax(z2,dim=<span class="number">0</span>)</span><br><span class="line">        loss = F.nll_loss(log_softmax.view(<span class="number">1</span>,<span class="number">-1</span>), y_true)</span><br><span class="line">        loss_val += loss.item()</span><br><span class="line">        loss.backward()</span><br><span class="line">        W1.data -= learning_rate * W1.grad.data</span><br><span class="line">        W2.data -= learning_rate * W2.grad.data</span><br><span class="line"></span><br><span class="line">        W1.grad.data.zero_()</span><br><span class="line">        W2.grad.data.zero_()</span><br><span class="line">    <span class="keyword">if</span> epo % <span class="number">10</span> == <span class="number">0</span>:    </span><br><span class="line">        print(<span class="string">f'Loss at epo <span class="subst">&#123;epo&#125;</span>: <span class="subst">&#123;loss_val/len(idx_pairs)&#125;</span>'</span>)</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/NLP/" rel="tag"><i class="fa fa-tag"></i> NLP</a>
+          
+            <a href="/tags/word2vec/" rel="tag"><i class="fa fa-tag"></i> word2vec</a>
+          
+            <a href="/tags/Pytorch/" rel="tag"><i class="fa fa-tag"></i> Pytorch</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/22/使用Pytorch深度学习进行NLP/" rel="next" title="使用Pytorch深度学习进行NLP">
+                <i class="fa fa-chevron-left"></i> 使用Pytorch深度学习进行NLP
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/08/20/hello-world/" rel="prev" title="Hello World">
+                Hello World <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="Arvin_Zhang">
+            
+              <p class="site-author-name" itemprop="name">Arvin_Zhang</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/zhangweifeng919" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:zhangweifeng919@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#引入相关包"><span class="nav-number">1.</span> <span class="nav-text">引入相关包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#语料"><span class="nav-number">2.</span> <span class="nav-text">语料</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建词汇表"><span class="nav-number">3.</span> <span class="nav-text">创建词汇表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#定义目标"><span class="nav-number">4.</span> <span class="nav-text">定义目标</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用负对数似然替换概率"><span class="nav-number">4.1.</span> <span class="nav-text">使用负对数似然替换概率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用加法替换乘法"><span class="nav-number">4.2.</span> <span class="nav-text">用加法替换乘法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#变换成合适的损失函数"><span class="nav-number">4.3.</span> <span class="nav-text">变换成合适的损失函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#定义P"><span class="nav-number">4.4.</span> <span class="nav-text">定义P</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结一下"><span class="nav-number">4.5.</span> <span class="nav-text">总结一下</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#很好，我们现在来编码"><span class="nav-number">5.</span> <span class="nav-text">很好，我们现在来编码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#输入层"><span class="nav-number">5.1.</span> <span class="nav-text">输入层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#隐含层"><span class="nav-number">5.2.</span> <span class="nav-text">隐含层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#输出层"><span class="nav-number">5.3.</span> <span class="nav-text">输出层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#反向传播"><span class="nav-number">5.4.</span> <span class="nav-text">反向传播</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#训练循环"><span class="nav-number">5.5.</span> <span class="nav-text">训练循环</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#提取向量"><span class="nav-number">6.</span> <span class="nav-text">提取向量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#全部代码"><span class="nav-number">7.</span> <span class="nav-text">全部代码</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Arvin_Zhang</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count"></span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+    console.log("已经推送");
+})();
+</script>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'kjMy4Wir9L7O2wDtjHexeyl8-gzGzoHsz',
+        appKey: 'zruMkYmFF2lxyMAreQ8AdUWr',
+        placeholder: '欢迎提问，一起讨论\(^o^)/~',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("kjMy4Wir9L7O2wDtjHexeyl8-gzGzoHsz", "zruMkYmFF2lxyMAreQ8AdUWr");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
