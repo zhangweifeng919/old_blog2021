@@ -861,4 +861,309 @@ if __name__ == '__main__':
     print(r)
 
 ```
+## 电话号码的字母组合
+给定一个仅包含数字 2-9 的字符串，返回所有它能表示的字母组合。
+给出数字到字母的映射如下（与电话按键相同）。注意 1 不对应任何字母。
+![图片](/images/leetcode/17_telephone_keypad.png)
+```
+输入："23"
+输出：["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"].
+说明:
+尽管上面的答案是按字典序排列的，但是你可以任意选择答案输出的顺序。
+```
+
+代码：
+```PYTHON
+class Solution(object):
+    m = {
+        '2':'abc', '3':'def', '4':'ghi',
+        '5':'jkl', '6':'mno', '7':'pqrs',
+        '8':'tuv', '9':'wxyz'
+    }
+    def dfs(self, i, digits, ans, tmp):
+        if i == len(digits):
+            ans.append(''.join(tmp))
+            return
+        for ch in self.m[digits[i]]:
+            tmp.append(ch)
+            self.dfs(i+1, digits, ans, tmp)
+            tmp.pop()
+            
+    def letterCombinations(self, digits):
+        """
+        :type digits: str
+        :rtype: List[str]
+        """
+        if not digits:
+            return []
+        ans = []
+        tmp = []
+        self.dfs(0, digits, ans, tmp)
+        return ans
+```
+## 四数之和
+给定一个包含 n 个整数的数组 nums 和一个目标值 target，判断 nums 中是否存在四个元素 a，b，c 和 d ，使得 a + b + c + d 的值与 target 相等？找出所有满足条件且不重复的四元组。
+注意：
+答案中不可以包含重复的四元组。
+示例：
+```PYTHON
+给定数组 nums = [1, 0, -1, 0, -2, 2]，和 target = 0。
+
+满足要求的四元组集合为：
+[
+  [-1,  0, 0, 1],
+  [-2, -1, 1, 2],
+  [-2,  0, 0, 2]
+]
+```
+代码：
+```PYTHON
+class Solution:
+    def fourSum(self,nums: List[int], target: int) -> List[List[int]]:
+        nums=sorted(nums)
+        print(nums)
+        result=[]
+        if len(nums)<4:
+            return result
+        first=0  
+        length=len(nums)
+        while first< length-3:
+            second=first+1
+            while second < length-2:
+                t1=target-nums[first]-nums[second]
+                third=second+1
+                fourth=length-1
+                while third<fourth:
+                    tmp=nums[third]+nums[fourth]
+                    if t1==tmp:
+                         result.append([nums[first],nums[second],nums[third],nums[fourth]])
+                         lt=nums[third]
+                         third+=1
+                         while nums[third]==lt and third<fourth:
+                             third+=1
+                    elif t1>tmp:
+                        third+=1
+                    else:
+                        fourth-=1
+                ls=nums[second]
+                second+=1
+                while ls==nums[second] and second<length-2:
+                    second+=1
+            lf=nums[first]
+            first+=1
+            while lf==nums[first] and first<length-3:
+                first+=1
+        return result
+
+```
+
+
+## 删除链表的倒数第N个节点
+给定一个链表，删除链表的倒数第 n 个节点，并且返回链表的头结点。
+
+示例：
+```
+给定一个链表: 1->2->3->4->5, 和 n = 2.
+
+当删除了倒数第二个节点后，链表变为 1->2->3->5.
+说明：
+
+给定的 n 保证是有效的。
+```
+代码：
+```PYTHON
+class Solution:
+    def removeNthFromEnd(self, head: ListNode, n: int) -> ListNode:
+        i=head
+        j=head
+        while n>0:
+            i=i.next
+            n-=1
+        if i==None:
+            head=j.next
+            return head
+        while i.next != None:
+            i=i.next
+            j=j.next
+        j.next=j.next.next
+        return head
+```
+## 有效括号
+给定一个只包括 '('，')'，'{'，'}'，'['，']' 的字符串，判断字符串是否有效。
+
+有效字符串需满足：
+
+左括号必须用相同类型的右括号闭合。
+左括号必须以正确的顺序闭合。
+注意空字符串可被认为是有效字符串。
+
+代码：
+```PYTHON
+class Solution:
+    def isValid(self, s: str) -> bool:
+        stack=[]
+        for i in range(len(s)):
+            if s[i] in ['(','{','[']:
+                stack.append(s[i])
+                continue
+            if len(stack)<1:
+                return False
+            if s[i]==')' and stack[-1]=='(':
+                stack.pop()
+                continue
+            if s[i]=='}' and stack[-1]=='{':
+                stack.pop()
+                continue
+            if s[i]==']' and stack[-1]=='[':
+                stack.pop()
+                continue
+            
+            return False
+        if len(stack)>0:
+            return False
+        else:
+            return True
+
+```
+## 合并两个有序列表
+将两个有序链表合并为一个新的有序链表并返回。新链表是通过拼接给定的两个链表的所有节点组成的。 
+示例：
+```
+输入：1->2->4, 1->3->4
+输出：1->1->2->3->4->4
+```
+代码：
+```PYTHON
+class Solution:
+    def mergeTwoLists(self, l1: ListNode, l2: ListNode) -> ListNode:
+        head=ListNode(0)
+        i=head
+        while True:
+            if l1==None and l2==None:
+                break
+            if l1!=None and l2 !=None:
+                if l1.val>l2.val:
+                    tmp=ListNode(l2.val)
+                    l2=l2.next
+                else:
+                    tmp=ListNode(l1.val)
+                    l1=l1.next
+                i.next=tmp
+                i=i.next
+                continue
+                
+            if l1==None:
+                i.next=l2
+                break
+            if l2==None:
+                i.next=l1
+                break
+        return head.next
+
+```
+## 括号生成
+给出 n 代表生成括号的对数，请你写出一个函数，使其能够生成所有可能的并且有效的括号组合。
+例如，给出 n = 3，生成结果为：
+```
+[
+  "((()))",
+  "(()())",
+  "(())()",
+  "()(())",
+  "()()()"
+]
+```
+代码：
+```PYTHON
+class Solution:
+    def generateParenthesis(self, n: int) -> List[str]:
+        
+        result=[]
+        self.f(0,0,n,"",result)
+        return result
+        
+        
+    def f(self,opened,closed,m,tmp,result):
+        if opened==closed and closed==m:
+            result.append(tmp)
+            return
+        if opened>closed:
+            self.f(opened,closed+1,m,tmp+')',result)
+        if opened<m:
+            self.f(opened+1,closed,m,tmp+'(',result)
+            
+```
+## 合并K个排序链表
+合并 k 个排序链表，返回合并后的排序链表。请分析和描述算法的复杂度。
+示例：
+```
+输入:
+[
+  1->4->5,
+  1->3->4,
+  2->6
+]
+输出: 1->1->2->3->4->4->5->6
+```
+代码：
+```PYTHON
+class Solution:
+    def mergeKLists(self, lists: List[ListNode]) -> ListNode:
+        if len(lists)<1:
+            return None
+        if len(lists)<2:
+            return lists[0]
+        
+        if len(lists)==2:
+            return self.mergeTwo(lists[0],lists[1])
+        length=len(lists)
+        a=self.mergeKLists(lists[0:length//2])
+        b=self.mergeKLists(lists[length//2:])
+        return self.mergeTwo(a,b)
+    def mergeTwo(self,a,b):
+        head=ListNode(0)
+        iNode=head
+        while True:
+            if a==None:
+                iNode.next=b
+                break
+            if b==None:
+                iNode.next=a
+                break
+            if a.val>b.val:
+                iNode.next=ListNode(b.val)
+                b=b.next
+            else:
+                iNode.next=ListNode(a.val)
+                a=a.next
+            iNode=iNode.next
+        return head.next
+                
+```
+## 两两交换链表中的节点
+给定一个链表，两两交换其中相邻的节点，并返回交换后的链表。
+你不能只是单纯的改变节点内部的值，而是需要实际的进行节点交换。
+示例：
+```
+给定 1->2->3->4, 你应该返回 2->1->4->3.
+```
+代码：
+```PYTHON
+class Solution:
+    def swapPairs(self, head: ListNode) -> ListNode:
+        if head==None or head.next==None:
+            return head
+        iNode=head
+        pre=ListNode(0)
+        pre.next=iNode
+        head=pre
+        while iNode!=None and iNode.next !=None:
+            nex=iNode.next
+            pre.next=nex
+            iNode.next=nex.next
+            nex.next=iNode
+            pre=iNode
+            iNode=iNode.next
+        return head.next
+```
 ## 未完待续。。。
