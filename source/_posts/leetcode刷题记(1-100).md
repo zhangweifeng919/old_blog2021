@@ -1166,4 +1166,171 @@ class Solution:
             iNode=iNode.next
         return head.next
 ```
+## K个一组翻转链表
+给你一个链表，每 k 个节点一组进行翻转，请你返回翻转后的链表。
+k 是一个正整数，它的值小于或等于链表的长度。
+如果节点总数不是 k 的整数倍，那么请将最后剩余的节点保持原有顺序。
+示例：
+```
+给定这个链表：1->2->3->4->5
+当 k = 2 时，应当返回: 2->1->4->3->5
+当 k = 3 时，应当返回: 3->2->1->4->5
+说明 :
+你的算法只能使用常数的额外空间。
+你不能只是单纯的改变节点内部的值，而是需要实际的进行节点交换。
+```
+代码：
+```PYTHON
+class Solution:
+    def reverseKGroup(self, head: ListNode, k: int) -> ListNode:
+        if head==None or head.next==None or k==1:
+            return head
+        pre=None
+        start=head
+        tail=head
+        while tail!=None:
+            for i in range(k-1):
+                tail=tail.next
+                if tail==None:
+                    if pre!=None:
+                        pre.next=start
+                    return head
+            
+            next_start=tail.next
+            tail.next=None
+            restart=self.reverseList(start)
+            if pre==None:
+                head=restart
+            else:
+                pre.next=restart
+            pre=start
+            start=next_start
+            tail=start
+    
+        return head
+    def reverseList(self,head):
+        pre=head
+        c=head
+        tail=head
+        
+        while c!=None:
+            nex=c.next
+            c.next=pre
+            pre=c
+            c=nex
+        tail.next=None
+        return pre
+```
+## 删除排序数组中的重复项
+给定一个排序数组，你需要在原地删除重复出现的元素，使得每个元素只出现一次，返回移除后数组的新长度。
+不要使用额外的数组空间，你必须在原地修改输入数组并在使用 O(1) 额外空间的条件下完成。
+示例：
+```
+给定数组 nums = [1,1,2], 
+函数应该返回新的长度 2, 并且原数组 nums 的前两个元素被修改为 1, 2。 
+你不需要考虑数组中超出新长度后面的元素。
+
+给定 nums = [0,0,1,1,1,2,2,3,3,4],
+函数应该返回新的长度 5, 并且原数组 nums 的前五个元素被修改为 0, 1, 2, 3, 4。
+你不需要考虑数组中超出新长度后面的元素。
+```
+代码：
+```PYTHON
+class Solution:
+    def removeDuplicates(self, nums: List[int]) -> int:
+        i=0
+        j=1
+        while j<len(nums):
+            if nums[i]==nums[j]:
+                j+=1
+            else:
+                i+=1
+                nums[i]=nums[j]
+                j+=1
+        return i+1
+```
+## 移除元素
+给定一个数组 nums 和一个值 val，你需要原地移除所有数值等于 val 的元素，返回移除后数组的新长度。
+不要使用额外的数组空间，你必须在原地修改输入数组并在使用 O(1) 额外空间的条件下完成。
+元素的顺序可以改变。你不需要考虑数组中超出新长度后面的元素。
+示例：
+```
+给定 nums = [3,2,2,3], val = 3,
+函数应该返回新的长度 2, 并且 nums 中的前两个元素均为 2。
+你不需要考虑数组中超出新长度后面的元素。
+给定 nums = [0,1,2,2,3,0,4,2], val = 2,
+函数应该返回新的长度 5, 并且 nums 中的前五个元素为 0, 1, 3, 0, 4。
+注意这五个元素可为任意顺序。
+```
+代码：
+```PYTHON
+class Solution:
+    def removeElement(self, nums: List[int], val: int) -> int:
+        i=0
+        j=len(nums)-1
+        while i<=j:
+            if nums[i]==val:
+                nums[i]=nums[j]
+                j-=1
+            else:
+                i+=1
+            
+        return i
+```
+## 实现str.Str()
+实现 strStr() 函数。
+给定一个 haystack 字符串和一个 needle 字符串，在 haystack 字符串中找出 needle 字符串出现的第一个位置 (从0开始)。如果不存在，则返回  -1。
+示例：
+```
+输入: haystack = "hello", needle = "ll"
+输出: 2
+
+输入: haystack = "aaaaa", needle = "bba"
+输出: -1
+```
+说明:
+当 needle 是空字符串时，我们应当返回什么值呢？这是一个在面试中很好的问题。
+对于本题而言，当 needle 是空字符串时我们应当返回 0 。这与C语言的 strstr() 以及 Java的 indexOf() 定义相符。
+代码：
+```PYTHON
+class Solution:
+    def strStr(self, haystack: str, needle: str) -> int:
+        a=len(needle)
+        b=len(haystack)
+        if a<1:
+            return 0
+        if b<1:
+            return -1
+        next=self.getNext(needle)
+        i=0
+        j=0
+        index=-1
+        while i<b and j<a:
+            if j==-1 or haystack[i]==needle[j]:
+                i+=1
+                j+=1
+            else:
+                j=next[j]
+        if j==a:
+            index=i-j
+        
+        return index
+        
+    def getNext(self,template):
+        l=len(template)
+        next=[0]*l
+        next[0]=-1
+        k=-1
+        j=0
+        while j<l-1:
+            if k==-1 or template[k]==template[j]:
+                k+=1
+                j+=1
+                next[j]=k
+            else:
+                k=next[k]
+        return next
+        
+        
+```
 ## 未完待续。。。
