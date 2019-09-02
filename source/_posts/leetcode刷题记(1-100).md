@@ -1333,4 +1333,165 @@ class Solution:
         
         
 ```
+## 两数相除
+给定两个整数，被除数 dividend 和除数 divisor。将两数相除，要求不使用乘法、除法和 mod 运算符。
+返回被除数 dividend 除以除数 divisor 得到的商。
+
+示例：
+```
+输入: dividend = 10, divisor = 3
+输出: 3
+
+输入: dividend = 7, divisor = -3
+输出: -2
+```
+说明：
+被除数和除数均为 32 位有符号整数。
+除数不为 0。
+假设我们的环境只能存储 32 位有符号整数，其数值范围是 [−2^31,  2^31 − 1]。本题中，如果除法结果溢出，则返回 2^31 − 1。
+代码：
+```PYTHON
+class Solution:
+    def divide(self, dividend: int, divisor: int) -> int:
+        fu=False
+        if dividend>0 and divisor<0 or dividend<0 and divisor>0:
+            fu=True
+        dividend=abs(dividend)
+        divisor=abs(divisor)
+        dividend_str=str(dividend)
+        divisor_str=str(divisor)
+        result=""
+        if fu:
+            result="-"
+        tmp=""
+        j=0
+        while j<len(dividend_str):
+            tmp+=dividend_str[j]
+            tmp_int=int(tmp)
+            if tmp_int<divisor:
+                result+='0'
+            else:
+                dd,dr=self.sm_divide(tmp_int,divisor)
+                tmp=str(dr)
+                result+=str(dd)
+            j+=1
+        myr=int(result)
+        #print(myr)
+        if myr<-2147483648 or myr>2147483647:
+            myr=2147483647
+        return myr
+    def sm_divide(self,dividend,divisor):
+        
+        quotient=0
+        while dividend>=divisor:
+            dividend-=divisor
+            quotient+=1
+        
+        
+        return (quotient,dividend)
+```
+## 串联所有单词的子串
+给定一个字符串 s 和一些长度相同的单词 words。找出 s 中恰好可以由 words 中所有单词串联形成的子串的起始位置。
+注意子串要与 words 中的单词完全匹配，中间不能有其他字符，但不需要考虑 words 中单词串联的顺序。
+示例：
+```
+输入：
+  s = "barfoothefoobarman",
+  words = ["foo","bar"]
+输出：[0,9]
+解释：
+从索引 0 和 9 开始的子串分别是 "barfoor" 和 "foobar" 。
+输出的顺序不重要, [9,0] 也是有效答案。
+
+输入：
+  s = "wordgoodgoodgoodbestword",
+  words = ["word","good","best","word"]
+输出：[]
+```
+代码：
+```PYTHON
+class Solution:
+    def findSubstring(self, s: str, words: List[str]) -> List[int]:
+        
+        if not s or not words:
+            return []
+        word_length=len(words[0])
+        words_count=len(words)
+        template_length=word_length*words_count
+        result=[]
+        l=len(s)
+        for i in range(0,word_length):
+            tmp=[]
+            j=i
+            k=i
+            for word in words:
+                tmp.append(word)
+            while j<l-word_length+1:
+                if s[j:j+word_length] in tmp:
+                    #print("find",s[j:j+word_length])
+                    tmp.remove(s[j:j+word_length])
+                    j=j+word_length
+                    if len(tmp)==0:
+                        result.append(k)
+                else:
+                    if s[k:k+word_length] in words:
+                       # print("restore",s[k:k+word_length])
+                        tmp.append(s[k:k+word_length])
+                    k=k+word_length
+                    if k>j:
+                        j=k                
+        return result
+```
+## 下一个排列
+实现获取下一个排列的函数，算法需要将给定数字序列重新排列成字典序中下一个更大的排列。
+如果不存在下一个更大的排列，则将数字重新排列成最小的排列（即升序排列）。
+必须原地修改，只允许使用额外常数空间。
+以下是一些例子，输入位于左侧列，其相应输出位于右侧列。
+```
+1,2,3 → 1,3,2
+3,2,1 → 1,2,3
+1,1,5 → 1,5,1
+
+```
+代码：
+```PYTHON
+class Solution:
+    def nextPermutation(self, nums: List[int]) -> None:
+        """
+        Do not return anything, modify nums in-place instead.
+        """
+        i=len(nums)-2
+        last_max=nums[i+1]
+        while i>=0:
+            cur=nums[i]
+            if cur>last_max:
+                last_max=cur
+                i-=1
+                continue
+            swap_ix=i+1
+            for k in range(i+1,len(nums)):
+                if nums[k]>cur and nums[swap_ix] >= nums[k]:
+                    swap_ix=k
+            if cur<nums[swap_ix]:
+                nums[i]=nums[swap_ix]
+                nums[swap_ix]=cur
+                break
+            else:
+                i-=1
+        if i<0:
+            nums.reverse()
+        else:
+            #print(nums,i+1,len(nums)-1)
+            self.myreverse(nums,i+1,len(nums)-1)
+            
+            
+    def myreverse(self,nums,i,j):
+        while i<j:
+            tmp=nums[i]
+            nums[i]=nums[j]
+            nums[j]=tmp
+            i+=1
+            j-=1
+```
+fgapfdjajsldfjas
 ## 未完待续。。。
