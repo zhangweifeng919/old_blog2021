@@ -124,7 +124,7 @@ a is
 a king
 ```
 具有完美的意义：
-![图](/images/文章阅读笔记/使用pytorch实现word2vec_skip_gram_图一.png)
+<img src="/images/文章阅读笔记/使用pytorch实现word2vec_skip_gram/图一.png" style="width:30%" />
 ## 定义目标
 现在我们详细介绍从第一个方程到最后实现的细节
 
