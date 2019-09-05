@@ -91,12 +91,12 @@
 <meta property="og:site_name" content="漂泊在学海">
 <meta property="og:description" content="学习使用Pytorch实现word2vec,翻译于：https://towardsdatascience.com/implementing-word2vec-in-pytorch-skip-gram-model-e6bae040d2fb">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://zhangweifeng.top/images/%E6%96%87%E7%AB%A0%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/%E4%BD%BF%E7%94%A8pytorch%E5%AE%9E%E7%8E%B0word2vec_skip_gram_%E5%9B%BE%E4%B8%80.png">
-<meta property="og:updated_time" content="2019-08-20T15:51:00.153Z">
+<meta property="og:image" content="https://zhangweifeng.top/images/文章阅读笔记/使用pytorch实现word2vec_skip_gram/图一.png">
+<meta property="og:updated_time" content="2019-09-05T15:15:42.729Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用Pytorch实现word2vec(skip-gram)">
 <meta name="twitter:description" content="学习使用Pytorch实现word2vec,翻译于：https://towardsdatascience.com/implementing-word2vec-in-pytorch-skip-gram-model-e6bae040d2fb">
-<meta name="twitter:image" content="https://zhangweifeng.top/images/%E6%96%87%E7%AB%A0%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/%E4%BD%BF%E7%94%A8pytorch%E5%AE%9E%E7%8E%B0word2vec_skip_gram_%E5%9B%BE%E4%B8%80.png">
+<meta name="twitter:image" content="https://zhangweifeng.top/images/文章阅读笔记/使用pytorch实现word2vec_skip_gram/图一.png">
 
 
 
@@ -336,8 +336,8 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2019-08-20T23:51:00+08:00">
-                2019-08-20
+              <time title="更新于" itemprop="dateModified" datetime="2019-09-05T23:15:42+08:00">
+                2019-09-05
               </time>
             
           </span>
@@ -462,7 +462,7 @@
 <p>可以很简单转换成单词：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">he <span class="keyword">is</span></span><br><span class="line">he a</span><br><span class="line"><span class="keyword">is</span> he</span><br><span class="line"><span class="keyword">is</span> a</span><br><span class="line"><span class="keyword">is</span> king</span><br><span class="line">a he</span><br><span class="line">a <span class="keyword">is</span></span><br><span class="line">a king</span><br></pre></td></tr></table></figure>
 
-<p>具有完美的意义：<br><img src="/images/%E6%96%87%E7%AB%A0%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/%E4%BD%BF%E7%94%A8pytorch%E5%AE%9E%E7%8E%B0word2vec_skip_gram_%E5%9B%BE%E4%B8%80.png" alt="图"></p>
+<p>具有完美的意义：<br><img src="/images/文章阅读笔记/使用pytorch实现word2vec_skip_gram/图一.png" style="width:30%"></p>
 <h2 id="定义目标"><a href="#定义目标" class="headerlink" title="定义目标"></a>定义目标</h2><p>现在我们详细介绍从第一个方程到最后实现的细节</p>
 <p>对于skip-gram 我们感兴趣的是给定中心词和一些参数来预测上下文词。这是我们的对于一个组合的概率分布<br>$$<br>P(context | center,\theta)<br>$$<br>现在我们想最大化所有的中心词和上下文词的组合：<br>$$<br>\max \prod_{center} \prod_{context} P(context | center,\theta)<br>$$<br>等等，为什么？<br>因为我们感兴趣的是给定中心词来预测上下文词，对于每个上下文词和中心词的组合，我们想最大化$P(context | center,\theta)$,所有的概率相加等于1——对于所有不存在的中心词，上下文词组合，我们默认他们为0。通过把这些概率相乘，如果我们的模型比较好，结果就会接近1，如果比较差，结果就会接近0，我们追求好的模型，所以，这是一个最大化的操作。<br>这个表达式不太适合计算，这就是为什么进行一些非常常规的变换。</p>
 <h3 id="使用负对数似然替换概率"><a href="#使用负对数似然替换概率" class="headerlink" title="使用负对数似然替换概率"></a>使用负对数似然替换概率</h3><p>回忆一下，在神经网络中，要最小化损失函数。我们可以简单的将P乘以-1，应用对数可以给我们更好的计算性质。对数不改变函数的极值，因为对数是严格的单调函数。所以表达式可以变为：<br>$$<br>\min_{\theta} - \log \prod_{center} \prod_{context} P(context | center,\theta)<br>$$</p>
@@ -633,7 +633,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">18</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
