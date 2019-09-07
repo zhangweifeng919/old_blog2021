@@ -138,7 +138,7 @@ Examples of correct and incorrect nuclei segmentation. Our method (Bottom) is ab
 表4总结了我们为将输入补丁分类为LUAD，LUSC和ND而进行的实验。 我们选择训练指定的网络，因为它们在最近的图像识别任务中具有最先进的性能（Deng et al。，2009）。 在训练期间，所有网络都快速过拟合训练数据。 这是因为两个原因：（i）所使用的网络架构已针对具有数百万图像和数千个类的大规模计算机视觉任务进行了优化; （ii） 由于我们的数据集的大小，我们的训练集规模相当有限。（iii）在给定足够数量的模型参数的情况下难以避免过度拟合。 因此，我们修改网络架构以通过减少层数来解决过度拟合的问题。 我们通过减少剩余单元的数量来修改ResNet的原始实现，这样我们在模型中总共只有32层
 ![表4](/images/论文阅读笔记/Methods_for_Segmentation_and_Classification_of_Digital_Microscopy_Tissue_Images/fbioe-07-00053-t0004.png)
 由于具有出色的补丁级性能，我们选择使用ResNet32处理测试集中的图像。 图10显示了四个测试WSI及其重叠概率图。 绿色区域显示分类为LUSC的区域，蓝色/紫色区域显示分类为LUAD的区域，黄色/橙色区域显示分类为ND的区域。
-![图10](/images/论文阅读笔记/Methods_for_Segmentation_and_Classification_of_Digital_Microscopy_Tissue_Images/fbioe-07-00053-g00010.jpg)
+![图10](/images/论文阅读笔记/Methods_for_Segmentation_and_Classification_of_Digital_Microscopy_Tissue_Images/fbioe-07-00053-g0010.jpg)
 Test WSIs with overlaid probability maps. Blue/purple indicates a region classified as diagnostic LUAD, green indicates a region classified as diagnostic LUSC, yellow/orange refers to a region classified as non-diagnostic.
 表5显示了由挑战组织者处理的NSCLC WSI分类的总体准确度。 我们观察到使用具有来自标记的WSI的统计和形态特征的随机森林回归模型提高了分类准确性。 当LUAD或LUSC是标记的WSI中的主导类时，最大投票就足够了，但是当没有明显的优势类时，随机森林回归模型会提高性能。 这是因为用作随机森林模型的输入的特征比仅使用投票方案更具信息性，因此可以更好地区分每种癌症类型。
 ![表4](/images/论文阅读笔记/Methods_for_Segmentation_and_Classification_of_Digital_Microscopy_Tissue_Images/fbioe-07-00053-t0005.png)
