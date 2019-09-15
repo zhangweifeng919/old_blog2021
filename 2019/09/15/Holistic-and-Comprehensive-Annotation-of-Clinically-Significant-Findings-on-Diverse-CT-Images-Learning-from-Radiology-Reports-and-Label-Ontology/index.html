@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+  
+  
+  <link rel="stylesheet" media="all" href="/lib/Han/dist/han.min.css?v=3.3">
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="医学图像处理,医学报告内容提取,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="临床上在不同CT图像上的重要发现的整体综合注解：从放射学报告和标记本体学习。">
+<meta name="keywords" content="医学图像处理,医学报告内容提取">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Holistic and Comprehensive Annotation of Clinically Significant Findings on Diverse CT Images: Learning from Radiology Reports and Label Ontology">
+<meta property="og:url" content="https://zhangweifeng.top/2019/09/15/Holistic-and-Comprehensive-Annotation-of-Clinically-Significant-Findings-on-Diverse-CT-Images-Learning-from-Radiology-Reports-and-Label-Ontology/index.html">
+<meta property="og:site_name" content="漂泊在学海">
+<meta property="og:description" content="临床上在不同CT图像上的重要发现的整体综合注解：从放射学报告和标记本体学习。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://zhangweifeng.top/images/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/Holistic_and_Comprehensive_Annotation_of_Clinically_Significant_Findings_on_Diverse_CT_Images_Learning_from_Radiology_Reports_and_Label_Ontology/label_ontology_fig1.png">
+<meta property="og:image" content="https://zhangweifeng.top/images/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/Holistic_and_Comprehensive_Annotation_of_Clinically_Significant_Findings_on_Diverse_CT_Images_Learning_from_Radiology_Reports_and_Label_Ontology/label_ontology_fig2.png">
+<meta property="og:image" content="https://zhangweifeng.top/images/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/Holistic_and_Comprehensive_Annotation_of_Clinically_Significant_Findings_on_Diverse_CT_Images_Learning_from_Radiology_Reports_and_Label_Ontology/label_ontology_fig3.png">
+<meta property="og:image" content="https://zhangweifeng.top/images/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/Holistic_and_Comprehensive_Annotation_of_Clinically_Significant_Findings_on_Diverse_CT_Images_Learning_from_Radiology_Reports_and_Label_Ontology/label_ontology_table1.png">
+<meta property="og:updated_time" content="2019-09-15T07:56:13.433Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Holistic and Comprehensive Annotation of Clinically Significant Findings on Diverse CT Images: Learning from Radiology Reports and Label Ontology">
+<meta name="twitter:description" content="临床上在不同CT图像上的重要发现的整体综合注解：从放射学报告和标记本体学习。">
+<meta name="twitter:image" content="https://zhangweifeng.top/images/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/Holistic_and_Comprehensive_Annotation_of_Clinically_Significant_Findings_on_Diverse_CT_Images_Learning_from_Radiology_Reports_and_Label_Ontology/label_ontology_fig1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zhangweifeng.top/2019/09/15/Holistic-and-Comprehensive-Annotation-of-Clinically-Significant-Findings-on-Diverse-CT-Images-Learning-from-Radiology-Reports-and-Label-Ontology/">
+
+
+
+
+
+  <title>Holistic and Comprehensive Annotation of Clinically Significant Findings on Diverse CT Images: Learning from Radiology Reports and Label Ontology | 漂泊在学海</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">漂泊在学海</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">学海无涯，回头是岸</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zhangweifeng.top/2019/09/15/Holistic-and-Comprehensive-Annotation-of-Clinically-Significant-Findings-on-Diverse-CT-Images-Learning-from-Radiology-Reports-and-Label-Ontology/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Arvin_Zhang">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="漂泊在学海">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Holistic and Comprehensive Annotation of Clinically Significant Findings on Diverse CT Images: Learning from Radiology Reports and Label Ontology</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-15T15:44:26+08:00">
+                2019-09-15
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2019-09-15T15:56:13+08:00">
+                2019-09-15
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/论文阅读笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">论文阅读笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/09/15/Holistic-and-Comprehensive-Annotation-of-Clinically-Significant-Findings-on-Diverse-CT-Images-Learning-from-Radiology-Reports-and-Label-Ontology/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/09/15/Holistic-and-Comprehensive-Annotation-of-Clinically-Significant-Findings-on-Diverse-CT-Images-Learning-from-Radiology-Reports-and-Label-Ontology/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2019/09/15/Holistic-and-Comprehensive-Annotation-of-Clinically-Significant-Findings-on-Diverse-CT-Images-Learning-from-Radiology-Reports-and-Label-Ontology/" class="leancloud_visitors" data-flag-title="Holistic and Comprehensive Annotation of Clinically Significant Findings on Diverse CT Images: Learning from Radiology Reports and Label Ontology">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+           
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  
+                </span>
+              
+
+              
+
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  临床上在不同CT图像上的重要发现的整体综合注解：从放射学报告和标记本体学习。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body han-init-context" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="背景："><a href="#背景：" class="headerlink" title="背景："></a>背景：</h2><p>病变分类是CAD（computer-aid diagnosis）中的重要主题之一。其中的应用包含医学图像对肝病变和肺组织进行分类，描述肺结节和乳腺肿块的属性，预测病变的恶性。然而，现存的方法主要关注于特定的身体部位（肺，乳腺，肝等），还有在有限的标签集合中进行分辨。因此，尚未探索覆盖不同身体部位的许多具有临床意义的病变标签。 实际上，一个病变可以被分配多个标签，标签之间具有一定联系。<br>在本文中，我解决了一个普遍和临床上有用的问题来模仿放射科医生。当一个经验丰富的放射科医生阅读一个医疗图片时比如CT扫描图，他可以发现整个身体上的不同类型的病变，识别出病变的详细信息，比如，身体部位，类型和属性，然后把这些标签链接到预定义的实体。我们致力于开发一个新的框架来预测这些语义标签，让距离“学习阅读CT图像”这个目标更进一步。我们把这个任务叫做病变注释。<br>最近发布的DeepLesion数据集，很大的减轻了数据集小和变化少的问题。但是在这个数据集中，没有给出每个病变的标签。人工的标注时是很困难的。在最近的研究启发下，我们使用自动化的数据挖掘方法，从放射学报告里面提取标签。在解释CT扫描的过程中，放射医生会人工<br>注解图像中的病变，然后在报告中放一个图像注解（书签）的超链接。首先定位报告中的和病变相关的书签句子，然后从句子中提取标签。我们基于RadLex词典定义了细粒度的本体。这个过程全部由数据驱动，需要很少的人工，这样我们可以容易地建立使用丰富的词汇建立大量数据集。<br><img src="/images/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/Holistic_and_Comprehensive_Annotation_of_Clinically_Significant_Findings_on_Diverse_CT_Images_Learning_from_Radiology_Reports_and_Label_Ontology/label_ontology_fig1.png" alt="fig1"><br>我们提出了一个LesaNet（Lesion annotation network）来预测在给定一个病变图像下的语义标签。这个任务可以看作多标签分类问题。尽管之前有广泛的研究。但是我们的问题特别具有挑战性，因为以下原因：1）放射报告的格式比较随意，所以提取到的标签可能具有噪音或者不完整。2）有些标签不容易识别和学习，比如：相邻的部位，类似的类型，微妙的属性。3）标签高度不平衡和长尾。<br>为了解决这个问题，第一步：通过文本挖掘模型减少训练标签中的噪音。这个模型分析报告，发现和感兴趣的病变相关的标签。第二步：我们构建了一个本体论，其中包含层次上的上下关系和标签之间的互斥关系。通过层次关系，我们应用标签扩展策略来推断缺少的父标签。互斥关系用在关系困难样本挖掘算法中，帮助lesaNet学习困难案例然后提高准确度。第三步：我们附上了一个简单的得分传播层增强召回率，尤其是罕见标签。最后，度量学习被纳入LesaNet，不仅提高分类的准确度，也可以实现度预测的可解释性。<br>本次研究主要有以下贡献1）我们研究了整体病变注解的问题，提出了一个使用最少人工注解工作的自动化学习框架。2）提出了从放射学报告中挖掘相关标签的算法3）一个高效的病变注解算法LesaNet，也可以适应其他多标签图像分类问题。4）在LesaNet中包含了标签之间的关系，来使用基于本体的医疗知识。</p>
+<h2 id="相关工作"><a href="#相关工作" class="headerlink" title="相关工作"></a>相关工作</h2><h3 id="1-本体构建"><a href="#1-本体构建" class="headerlink" title="1.本体构建"></a>1.本体构建</h3><p>我们基于RadLex构建我们的病变本体。RadLex是一个用于标准化索引和检索放射信息资源的综合词典，病变本体的标签可以分为三类：1）身体部位2）类型（结核，肿块等）3）属性（大小，形状，密度等）.这些标签被组织成层次性的结构。如下图：<br><img src="/images/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/Holistic_and_Comprehensive_Annotation_of_Clinically_Significant_Findings_on_Diverse_CT_Images_Learning_from_Radiology_Reports_and_Label_Ontology/label_ontology_fig2.png" alt="fig2"></p>
+<h3 id="2-相关标签提取"><a href="#2-相关标签提取" class="headerlink" title="2.相关标签提取"></a>2.相关标签提取</h3><p>构造好病变本体后，我们就可以从DeepLesion的关联的放射报告中提取标签。在报告中，放射医生描述病变和有时插入超链接，测量的大小，或者切片数量（我们把这些称为书签）。在本次工作中，我们只使用含有书签的句子来挖掘和病变相关的标签。首先我们使用NLTK进行标记句子，然后把单词按照词形变化归类得到最基本的形式，然后我们在预处理的时候匹配命名实体，然后基于它们的同义词把他们标准化为标签。由于相关和不确定的标签都会对接下来的训练带来影响，我们开发了一个文字挖掘模型来从相关标签中分辨他们。特别地，我们把它重新定义为分类问题。如果有一个含有多个标签和书签的句子，我们的目标是把相关的标签分配给每一个书签。为了这个目标，我们基于Peng【28，29】提出了一个CNN模型，这个模型的输入包含两个部分：含有标签和书签的单词序列和句子嵌入。这个模型输出一个标签和书签之间的关系类型（不相关，不确定，相关）的概率向量。</p>
+<h3 id="3-Lesion-Annotation-Network-LesaNet-病变注解网络"><a href="#3-Lesion-Annotation-Network-LesaNet-病变注解网络" class="headerlink" title="3.Lesion Annotation Network (LesaNet) 病变注解网络"></a>3.Lesion Annotation Network (LesaNet) 病变注解网络</h3><p><img src="/images/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/Holistic_and_Comprehensive_Annotation_of_Clinically_Significant_Findings_on_Diverse_CT_Images_Learning_from_Radiology_Reports_and_Label_Ontology/label_ontology_fig3.png" alt="fig3"><br>上图是LesaNet的框架，输入时病变图像patch，最终输出时提炼后的分数$\widetilde{s}$,扩展的标签被用来训练LesaNet和优化四个损失。模型中的红色部分时我们的主要贡献<br>网络的主干是含有批规则化的VGG-16。我们的任务中，不同的标签可能会由不同水平的特征建模。比如，身体部位需要高级别的特征，然而许多属性描绘低级别的细节。因此我们使用多尺度的特征表示。<br>标签扩展：从报告中提取的标签是步完整的。这个层次化的标签关系可以帮助我们推断出丢失的父标签。如果一个孩子标签是true，那么他的所有父标签都是true。<br>关系难样本挖掘（RHEM）：如果他们的孩子标签没有在报告中提及，标签扩展就不能完成其他丢失的标签。当放射科医师没有描述病变的每个属性或省略细粒度身体部分时，就会出现这个问题。虽然很难获取这些丢失正向标签，但是我们可以使用排他性关系找到可靠的负面标签。我们任务的一个挑战是有一些标签很难学习。我们希望损失函数可以自动的侧重它们。在OHEM（online  hard example mining）启发下，定义了一个损失函数用参数改变对难样本的侧重。<br>得分传播层，在LesaNet最后附加一个得分传播层（SPL）。它是一个简单的FC层，用线性变换矩阵W细化预测得分，然后加权CE损失（等式1）。虽然层次化和排他性的标签关系已经通过标签扩充和RHEM明确地表达，但是使用SPL仍然是有用的，因为它可以提高正相关标记的得分，抑制负相关得分。另一方面，一些排他性标签在位置和外观上可能非常相似，例如血管瘤和肝脏转移。当SPL看到血管瘤的高分时，它会知道它也可能是转移，因为在某些情况下它们很难区分。因此，SPL实际上会略微增加转移的分数而不是抑制它。这种机制特别有利于改善对预测分数通常较低的罕见标签的召回率。这个基本原理将SPL与先前的知识传播方法[16]区分开来，知识传播方法对专有标签强制执行负权重，这导致我们的任务中的性能降低。 通过观察学到的W，我们还可以发现更多的标签相关性，并将它们与我们的先前知识进行比较。</p>
+<h2 id="Multilabel-Triplet-Loss"><a href="#Multilabel-Triplet-Loss" class="headerlink" title="Multilabel Triplet Loss"></a>Multilabel Triplet Loss</h2><p>对于CAD任务，可解释性是重要的，我们期望这个算法可以为它的预测提供证据。对病变进行分类后，LesaNet可以显示在数据库中有相似标签的病变，这将是帮助用户更好地理解其预测以及病变本身。这是一个病变注解和检索问题。病变检索在[48]中研究，但只有8使用粗尺度的身体部位标签。 在本文中，我们使用从报告中挖掘的综合标签来学习特征嵌入来模拟病变之间的相似性。如图3所示，应用FC层将多尺度特征投影到256D向量，然后是三元组损失[33]。 为了测量具有多个标签的两个图像之间的相似性，Zhao等人。 [51]使用共同阳性标签的数量作为标准。 但是，我们认为每个病变可能有不同数量的标签，所以不相交的积极标签的数量也很重要。</p>
+<h2 id="测试结果"><a href="#测试结果" class="headerlink" title="测试结果"></a>测试结果</h2><p><img src="/images/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/Holistic_and_Comprehensive_Annotation_of_Clinically_Significant_Findings_on_Diverse_CT_Images_Learning_from_Radiology_Reports_and_Label_Ontology/label_ontology_table1.png" alt="table1"><br>基准方法是上述章节描述的多尺度多标签CNN。WARP（weighted approximate ranking pairwise ）损失是一个常用的多标签损失，目的是把正向标签排名比负向标签排名高。病变嵌入是在基于粗粒度身体部分，病变位置和大小的标签训练的。在四种方法中LesaNet达到了最好的AUC和F1分数。</p>
+<h2 id="结论和未来"><a href="#结论和未来" class="headerlink" title="结论和未来"></a>结论和未来</h2><p>本篇文章中，我们研究了整体的病变注解问题，提出了从放射报告和标注本体中自动学习临床有意义的标签的框架。提出的病变注解网络提高了准确性和并具有相应的见解和可解释性。我们未来的工作可能会收集更多的数据，用来更好的学习稀有和困难标签，并融入更多人类知识。</p>
+<h2 id="个人总结和思考"><a href="#个人总结和思考" class="headerlink" title="个人总结和思考"></a>个人总结和思考</h2><p>本文的作者提出了从放射报告中学习，对整个放射图像进行标签标记的方法。这个方法将图像处理和文字处理结合在一起，对放射图像的标记达到了不错的效果。关键点在于对图像区域的识别，对文字的信息的提取，并把他们结合在一起。其中的每一个环节都对结果有一定的影响，如果能提高其中一部分，整体效果应该也会有一定的提高。想办法得到更多的训练数据也是应该有一定的提高的。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/医学图像处理/" rel="tag"><i class="fa fa-tag"></i> 医学图像处理</a>
+          
+            <a href="/tags/医学报告内容提取/" rel="tag"><i class="fa fa-tag"></i> 医学报告内容提取</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/15/Data-augmentation-using-learned-transforms-for-one-shot-medical-image-segmentation/" rel="next" title="Data augmentation using learned transforms for one-shot medical image segmentation">
+                <i class="fa fa-chevron-left"></i> Data augmentation using learned transforms for one-shot medical image segmentation
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="Arvin_Zhang">
+            
+              <p class="site-author-name" itemprop="name">Arvin_Zhang</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/zhangweifeng919" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:zhangweifeng919@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#背景："><span class="nav-number">1.</span> <span class="nav-text">背景：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#相关工作"><span class="nav-number">2.</span> <span class="nav-text">相关工作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-本体构建"><span class="nav-number">2.1.</span> <span class="nav-text">1.本体构建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-相关标签提取"><span class="nav-number">2.2.</span> <span class="nav-text">2.相关标签提取</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Lesion-Annotation-Network-LesaNet-病变注解网络"><span class="nav-number">2.3.</span> <span class="nav-text">3.Lesion Annotation Network (LesaNet) 病变注解网络</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Multilabel-Triplet-Loss"><span class="nav-number">3.</span> <span class="nav-text">Multilabel Triplet Loss</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#测试结果"><span class="nav-number">4.</span> <span class="nav-text">测试结果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结论和未来"><span class="nav-number">5.</span> <span class="nav-text">结论和未来</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#个人总结和思考"><span class="nav-number">6.</span> <span class="nav-text">个人总结和思考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Arvin_Zhang</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count"></span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+    console.log("已经推送");
+})();
+</script>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'kjMy4Wir9L7O2wDtjHexeyl8-gzGzoHsz',
+        appKey: 'zruMkYmFF2lxyMAreQ8AdUWr',
+        placeholder: '欢迎提问，一起讨论\(^o^)/~',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("kjMy4Wir9L7O2wDtjHexeyl8-gzGzoHsz", "zruMkYmFF2lxyMAreQ8AdUWr");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
