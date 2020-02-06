@@ -1493,5 +1493,39 @@ class Solution:
             i+=1
             j-=1
 ```
-fgapfdjajsldfjas
+## 最长有效括号
+给定一个只包含 '(' 和 ')' 的字符串，找出最长的包含有效括号的子串的长度
+```
+输入: "(()"
+输出: 2
+解释: 最长有效括号子串为 "()"
+
+输入: ")()())"
+输出: 4
+解释: 最长有效括号子串为 "()()"
+
+```
+代码：
+```PYTHON
+class Solution:
+    def longestValidParentheses(self, s: str) -> int:
+        
+        a=0
+        maxlen=0
+        stack=[]
+        stack.append(-1)
+        for i in range(len(s)):
+            if s[i]=='(':
+                stack.append(i)
+            else:
+                if len(stack)>1:
+                    stack.pop()
+                    maxlen=max(maxlen,i-stack[-1])
+                else:
+                    stack[0]=i
+            
+                    
+        return maxlen
+                
+```
 ## 未完待续。。。
