@@ -7,7 +7,7 @@
 
 <html class="theme-next pisces use-motion" lang="zh-Hans">
 <head><meta name="generator" content="Hexo 3.9.0">
-  <meta charset="UTF-8">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="theme-color" content="#222">
@@ -132,7 +132,7 @@
 
 
 
-  <title>结巴（jieba）分词源码分析 | 漂泊在学海</title>
+  <title>结巴（jieba）分词源码分析 | 漂泊在学海</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -151,7 +151,7 @@
     
   
 
-  <div class="container sidebar-position-left page-post-detail">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -486,11 +486,10 @@
 </ol>
 </li>
 </ol>
-<p>从代码中可以看出calc是一个自底向上的动态规划(重叠子问题、最优子结构)，它从sentence的最后一个字(N-1)开始倒序遍历sentence的字(idx)的方式，计算子句sentence[idx~N-1]概率对数得分（这里利用DAG及历史计算结果route实现，同时赞下 作者的概率使用概率对数 这样有效防止 下溢问题）。然后将概率对数得分最高的情况以（概率对数，词语最后一个字的位置）这样的tuple保存在route中。 </p>
-<ol start="4">
-<li><p>获取切分结果</p>
+<p>从代码中可以看出calc是一个自底向上的动态规划(重叠子问题、最优子结构)，它从sentence的最后一个字(N-1)开始倒序遍历sentence的字(idx)的方式，计算子句sentence[idx~N-1]概率对数得分（这里利用DAG及历史计算结果route实现，同时赞下 作者的概率使用概率对数 这样有效防止 下溢问题）。然后将概率对数得分最高的情况以（概率对数，词语最后一个字的位置）这样的tuple保存在route中。<br>  4. 获取切分结果</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">__cut_DAG_NO_HMM</span><span class="params">(self, sentence)</span>:</span></span><br><span class="line">       DAG = self.get_DAG(sentence) <span class="comment"># 获取dag</span></span><br><span class="line">       route = &#123;&#125;</span><br><span class="line">       self.calc(sentence, DAG, route) <span class="comment"># 获取最大概率切分组合</span></span><br><span class="line">       x = <span class="number">0</span></span><br><span class="line">       N = len(sentence)</span><br><span class="line">       buf = <span class="string">''</span></span><br><span class="line">       <span class="keyword">while</span> x &lt; N:</span><br><span class="line">           y = route[x][<span class="number">1</span>] + <span class="number">1</span></span><br><span class="line">           l_word = sentence[x:y] <span class="comment"># 以x为起点的最大概率切分词语</span></span><br><span class="line">           <span class="keyword">if</span> re_eng.match(l_word) <span class="keyword">and</span> len(l_word) == <span class="number">1</span>: <span class="comment"># 数字或者字母</span></span><br><span class="line">               buf += l_word</span><br><span class="line">               x = y</span><br><span class="line">           <span class="keyword">else</span>:</span><br><span class="line">               <span class="keyword">if</span> buf:</span><br><span class="line">                   <span class="keyword">yield</span> buf</span><br><span class="line">                   buf = <span class="string">''</span></span><br><span class="line">               <span class="keyword">yield</span> l_word</span><br><span class="line">               x = y</span><br><span class="line">       <span class="keyword">if</span> buf:</span><br><span class="line">           <span class="keyword">yield</span> buf</span><br><span class="line">           buf = <span class="string">''</span></span><br></pre></td></tr></table></figure>
-</li>
+
+<ol start="5">
 <li><p>测试</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding:utf8</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string"> 测试jieba 文件</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="keyword">import</span> jieba</span><br><span class="line"><span class="keyword">from</span> jieba <span class="keyword">import</span> Tokenizer</span><br><span class="line">s=<span class="string">"去北京大学玩"</span></span><br><span class="line">t=Tokenizer()</span><br><span class="line">t.initialize()</span><br><span class="line">dag=t.get_DAG(s)</span><br><span class="line">print(dag)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(s)):</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> dag[i]:</span><br><span class="line">            print(i,j,s[i:j+<span class="number">1</span>])</span><br><span class="line">myroute=&#123;&#125;</span><br><span class="line">t.calc(s,dag,myroute)</span><br><span class="line">print(myroute)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">cut_DAG_NO_HMM</span><span class="params">(sentence,DAG,route)</span>:</span></span><br><span class="line">    x = <span class="number">0</span></span><br><span class="line">    N = len(sentence)</span><br><span class="line">    buf = <span class="string">''</span></span><br><span class="line">    <span class="keyword">while</span> x &lt; N:</span><br><span class="line">        y = route[x][<span class="number">1</span>] + <span class="number">1</span></span><br><span class="line">        l_word = sentence[x:y] <span class="comment"># 以x为起点的最大概率切分词语</span></span><br><span class="line">        <span class="keyword">if</span> jieba.re_eng.match(l_word) <span class="keyword">and</span> len(l_word) == <span class="number">1</span>: <span class="comment"># 数字或者字母</span></span><br><span class="line">            buf += l_word</span><br><span class="line">            x = y</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">if</span> buf:</span><br><span class="line">                <span class="keyword">yield</span> buf</span><br><span class="line">                buf = <span class="string">''</span></span><br><span class="line">            <span class="keyword">yield</span> l_word</span><br><span class="line">            x = y</span><br><span class="line">    <span class="keyword">if</span> buf:</span><br><span class="line">        <span class="keyword">yield</span> buf</span><br><span class="line">        buf = <span class="string">''</span></span><br><span class="line">print(<span class="string">'/'</span>.join(cut_DAG_NO_HMM(sentence=s,DAG=dag,route=myroute)))</span><br></pre></td></tr></table></figure>
 </li>
@@ -624,7 +623,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-count">21</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -646,7 +645,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-count">19</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -1403,7 +1402,24 @@
         }
       });
     </script>
-    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
   
 
 
