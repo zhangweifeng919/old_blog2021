@@ -16,6 +16,7 @@
           position: fixed;
           width: 100%;
           height: 100%;
+          transform: rotate(180deg); /* Equal to rotateZ(45deg) */
         }
 
         .time_container,
@@ -47,7 +48,7 @@
 </head>
 
 <body>
-    <div class="page">
+    <div class="page" >
       <div class="time_container">
           <div class="time" id="time">11:27</div>
       </div>
@@ -70,9 +71,12 @@
         var weekList = ['日', '一', '二', '三', '四', '五', '六']
         var weekString = '星期' + weekList[date.getDay()]
 
+        
+
         document.getElementById("time").innerHTML = timeString
         document.getElementById("date").innerHTML = dateString
         document.getElementById("week").innerHTML = weekString
+
       }
 
       update()
