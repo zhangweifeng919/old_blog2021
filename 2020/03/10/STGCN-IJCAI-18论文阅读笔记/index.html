@@ -95,7 +95,7 @@
 <meta property="og:image" content="https://zhangweifeng.top/images/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/STGCN_IJCAI-18%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/equation02.png">
 <meta property="og:image" content="https://zhangweifeng.top/images/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/STGCN_IJCAI-18%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/figure02.png">
 <meta property="og:image" content="https://zhangweifeng.top/images/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/STGCN_IJCAI-18%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/figure01.png">
-<meta property="og:updated_time" content="2020-03-11T07:32:24.360Z">
+<meta property="og:updated_time" content="2020-03-26T11:52:55.725Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="STGCN_IJCAI_18论文阅读笔记">
 <meta name="twitter:description" content="时空图卷积网络：一个交通预测的深度学习框架">
@@ -339,8 +339,8 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2020-03-11T15:32:24+08:00">
-                2020-03-11
+              <time title="更新于" itemprop="dateModified" datetime="2020-03-26T19:52:55+08:00">
+                2020-03-26
               </time>
             
           </span>
@@ -450,6 +450,7 @@
 <p>其中$\theta_0,\theta_1$s是核共享的参数。为了约束参数核稳定数值性能，$\theta_0$和$\theta_1$使用一个$\theta$替换，使得$\theta = \theta_0= -\theta_1$ ,$W$和$D$ 再通过$\widetilde{W}=W+ I_n ,\widetilde{D}_{ii}=\sum_j\widetilde{D}{ij}$分别归一化，然后图的卷积可以表示为<br>$$<br>\Theta{*G} x = \theta(I_n + D^{-\frac{1}{2}} W D^{-\frac{1}{2}}) x<br>= \theta(\widetilde{D}^{-\frac{1}{2}} \widetilde{W} \widetilde{D}^{-\frac{1}{2}})x<br>$$<br>应用具有1阶近似的图卷积垂直层叠，达到了和K-localized水平卷积相似的效果。都利用了K-1阶的邻居信息。在这种情况下，K是在模型中连续滤波操作或者卷积层的数量。此外，分层的线性结构对于大型图来说是参数经济和高效的，因为近似的阶数被限制为1.</p>
 <h5 id="图卷积的推广"><a href="#图卷积的推广" class="headerlink" title="图卷积的推广"></a>图卷积的推广</h5><p>在$x \in \mathbb{R}^n$ 上的图卷积操作“$*G$”可以推广多维的张量，对于具有$C_i$通道的信号，$X \in \mathbb{R}^{n \times C_i}$,图卷积可以推广为：<br>$$<br>y_i = \sum_{i=1}^{C_i} \Theta{i,j}(L)x_i \in \mathbb{R}^n 1 \leq j \leq C_0<br>（6）<br>$$<br>切比雪夫系数$\Theta_{i,j} \in \mathbb{R}^K$的$C_i \times C_o$ 向量（$C_i,C_o$ 是特征的输入和输出）。对于2维变量的卷积表示$\Theta_{\ast G}$为其中$\Theta \in \mathbb{R}^{K \times C_i \times C_0}$.特别地，交通预测的输入是由M帧路图作为输入，正如图1所示，每帧$v_t$可以看作一个矩阵，它的列i 是图$G_t$中第i个节点$v_t$d的$C_i$维的值。$X \in \mathbb{R}^{n \times C_i}$(在这个例子中$C_i=1$),对于M中的每个时间步，使用相同的核$\Theta$进行图卷积操作并行地施加在$X_t \in \mathbb{R}^{n \times C_i}$ 这样，图卷积可以进一步推广到3维变量中，表示为$\Theta_{\ast G} \chi $其中 $\chi \in \mathbb{R}^{M \times n \times C_i}$<br><img src="/images/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/STGCN_IJCAI-18%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/figure01.png" alt="figure01"></p>
 <h4 id="提取时间特征的门CNNs"><a href="#提取时间特征的门CNNs" class="headerlink" title="提取时间特征的门CNNs"></a>提取时间特征的门CNNs</h4><p>虽然基于RNN的模型，在时间序列分析中广泛应用。但是循环网络在交通预测中，具有耗时的迭代，复杂的门机制和对动态变化反应较慢。与此相比，CNN具有快速训练的优势，简单的结构和不依赖之前的步骤。所以在Gehring2017的启发下，我们在时间轴采用了卷积的结构获取交通流的时间动态表现。这个特定的设计使得通过层次表示的多层卷积结构可以并行和可控的训练过程。<br>正如图2显示那样，时间卷积层包含了一个具有宽度为$K_t$卷积核的1-D因果卷积，之后是一个门线性单元（GLU）作为一个非线性。在图G中节点，时间卷积利用输入元素的$K_t$个邻居（不用padding），这样可以每次把序列减少$K_t -1$.这样的话，每个节点时间卷积的输入看作一个长度为M，通道为$C_i$的序列，$Y \in \mathbb{R}^{M \times C_i}$. 卷积核 $\Gamma \in  \mathbb{R}^{K_t \times C_i \times 2C_0}$,用来将输入Y映射为一个单独输出元素</p>
+<p><a href="/images/论文阅读笔记/STGCN_IJCAI-18论文阅读笔记/交通速度预测STGCN.pptx">我写的PPT，包含了内容</a></p>
 
       
     </div>
