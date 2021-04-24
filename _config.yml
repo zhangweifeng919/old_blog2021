@@ -5,7 +5,7 @@
 # Site
 title: 漂泊在学海
 subtitle: 学海无涯，回头是岸
-description: 自然语言处理,机器学习
+description: 自然语言处理，机器学习，推荐系统
 author: Arvin_Zhang
 language: zh-Hans
 timezone: Asia/Shanghai
@@ -42,7 +42,14 @@ highlight:
   line_number: true
   auto_detect: false
   tab_replace:
-  
+# Post wordcount display settings
+# Dependencies: https://github.com/willin/hexo-wordcount
+post_wordcount:
+  item_text: true
+  wordcount: true         # 单篇 字数统计
+  min2read: true          # 单篇 阅读时长
+  totalcount: false       # 网站 字数统计
+  separated_meta: true
 # Home page setting
 # path: Root path for your blogs index page. (default = '')
 # per_page: Posts displayed per page. (0 = disable pagination)
